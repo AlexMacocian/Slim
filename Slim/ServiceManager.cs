@@ -114,7 +114,6 @@ namespace Slim
                 if (!this.Singletons.TryGetValue(tInterface, out obj))
                 {
                     obj = TryImplementService(tInterface);
-                    this.Singletons[tInterface] = obj;
                 }
             }
             else
@@ -124,6 +123,10 @@ namespace Slim
 
             if (obj is object)
             {
+                if (lifetime == Lifetime.Singleton)
+                {
+                    this.Singletons[tInterface] = obj;
+                }
                 return obj;
             }
 
@@ -172,25 +175,24 @@ namespace Slim
             var parameterImplementationList = new List<object>();
             foreach (var par in parameterInfos)
             {
-                if (!InterfaceMapping.TryGetValue(par.ParameterType, out var mappingTuple))
+                if (!this.InterfaceMapping.TryGetValue(par.ParameterType, out var mappingTuple))
                 {
-                    return null;
+                    throw new DependencyInjectionException($"No service registered with type {par.ParameterType}");
                 }
 
                 (_, var lifetime) = mappingTuple;
                 if (!Singletons.TryGetValue(par.ParameterType, out var obj))
                 {
                     obj = TryImplementService(par.ParameterType);
-                }
+                    if (obj is null)
+                    {
+                        return null;
+                    }
 
-                if (obj is null)
-                {
-                    return null;
-                }
-
-                if (lifetime == Lifetime.Singleton)
-                {
-                    this.Singletons[par.ParameterType] = obj;
+                    if (lifetime == Lifetime.Singleton)
+                    {
+                        this.Singletons[par.ParameterType] = obj;
+                    }
                 }
 
                 parameterImplementationList.Add(obj);

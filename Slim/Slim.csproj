@@ -7,9 +7,10 @@
     <Company />
     <Product></Product>
     <Description>Service lifetime management and dependency injection framework.</Description>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
+    <FileVersion>1.0.0.2</FileVersion>
     <PackageProjectUrl>https://github.com/AlexMacocian/Slim</PackageProjectUrl>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
 </Project>
