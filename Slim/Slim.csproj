@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Alexandru Macocian</Authors>
+    <Company />
+    <Product></Product>
+    <Description>Service lifetime management and dependency injection framework.</Description>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <PackageProjectUrl>https://github.com/AlexMacocian/Slim</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>
