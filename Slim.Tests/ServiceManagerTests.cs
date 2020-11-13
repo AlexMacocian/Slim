@@ -115,5 +115,18 @@ namespace Slim.Tests
             dependentService.IndependentService.Should().BeSameAs(dependentService2.IndependentService);
             independentService.Should().BeSameAs(dependentService.IndependentService);
         }
+
+        [TestMethod]
+        public void MultipleDeclarationsReturnSameSingleton()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            di.RegisterSingleton<IndependentService, IndependentService>();
+
+            var independentService = di.GetService<IIndependentService>();
+            var sameIndependentService = di.GetService<IndependentService>();
+
+            independentService.Should().BeSameAs(sameIndependentService);
+        }
     }
 }

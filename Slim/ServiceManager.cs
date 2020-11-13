@@ -111,7 +111,7 @@ namespace Slim
             object obj = null;
             if (lifetime == Lifetime.Singleton)
             {
-                if (!this.Singletons.TryGetValue(tInterface, out obj))
+                if (!this.Singletons.TryGetValue(type, out obj))
                 {
                     obj = TryImplementService(tInterface);
                 }
@@ -125,7 +125,7 @@ namespace Slim
             {
                 if (lifetime == Lifetime.Singleton)
                 {
-                    this.Singletons[tInterface] = obj;
+                    this.Singletons[type] = obj;
                 }
                 return obj;
             }
@@ -180,19 +180,28 @@ namespace Slim
                     throw new DependencyInjectionException($"No service registered with type {par.ParameterType}");
                 }
 
-                (_, var lifetime) = mappingTuple;
-                if (!Singletons.TryGetValue(par.ParameterType, out var obj))
+                (var actualType, var lifetime) = mappingTuple;
+                if (this.Singletons.TryGetValue(par.ParameterType, out var obj))
                 {
-                    obj = TryImplementService(par.ParameterType);
-                    if (obj is null)
-                    {
-                        return null;
-                    }
+                    parameterImplementationList.Add(obj);
+                    continue;
+                }
 
-                    if (lifetime == Lifetime.Singleton)
-                    {
-                        this.Singletons[par.ParameterType] = obj;
-                    }
+                if (this.Singletons.TryGetValue(actualType, out obj))
+                {
+                    parameterImplementationList.Add(obj);
+                    continue;
+                }
+
+                obj = TryImplementService(par.ParameterType);
+                if (obj is null)
+                {
+                    return null;
+                }
+
+                if (lifetime == Lifetime.Singleton)
+                {
+                    this.Singletons[par.ParameterType] = obj;
                 }
 
                 parameterImplementationList.Add(obj);
