@@ -104,7 +104,7 @@ namespace Slim
         {
             if (!this.InterfaceMapping.TryGetValue(tInterface, out var mappingTuple))
             {
-                throw new DependencyInjectionException($"No registered service for type {tInterface.Name}.");
+                throw new DependencyInjectionException($"No registered service for type {tInterface.Name}!");
             }
 
             (var type, var lifetime) = mappingTuple;
@@ -134,7 +134,7 @@ namespace Slim
              * If no constructors were able to be called succesfully, throw exception.
              */
 
-            throw new DependencyInjectionException($"No suitable constructor was found for type {tInterface.Name}");
+            throw new DependencyInjectionException($"No suitable constructor was found for type {tInterface.Name}!");
         }
         private object TryImplementService(Type type)
         {
@@ -159,13 +159,20 @@ namespace Slim
                     continue;
                 }
 
-                var parameters = GetParameters(constructor.GetParameters());
-                if (parameters is null)
+                try
                 {
-                    continue;
-                }
+                    var parameters = GetParameters(constructor.GetParameters());
+                    if (parameters is null)
+                    {
+                        continue;
+                    }
 
-                return constructor.Invoke(parameters);
+                    return constructor.Invoke(parameters);
+                }
+                catch(DependencyInjectionException exception)
+                {
+                    throw new DependencyInjectionException($"Could not instantiate service of type {implementType}!", exception);
+                }
             }
 
             return null;
@@ -177,7 +184,7 @@ namespace Slim
             {
                 if (!this.InterfaceMapping.TryGetValue(par.ParameterType, out var mappingTuple))
                 {
-                    throw new DependencyInjectionException($"No service registered with type {par.ParameterType}");
+                    throw new DependencyInjectionException($"No service registered with type {par.ParameterType}!");
                 }
 
                 (var actualType, var lifetime) = mappingTuple;
@@ -201,7 +208,7 @@ namespace Slim
 
                 if (lifetime == Lifetime.Singleton)
                 {
-                    this.Singletons[par.ParameterType] = obj;
+                    this.Singletons[actualType] = obj;
                 }
 
                 parameterImplementationList.Add(obj);
