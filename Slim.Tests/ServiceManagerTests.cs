@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Slim.Exceptions;
 using Slim.Tests.Models;
+using System;
 
 namespace Slim.Tests
 {
@@ -127,6 +128,58 @@ namespace Slim.Tests
             var sameIndependentService = di.GetService<IndependentService>();
 
             independentService.Should().BeSameAs(sameIndependentService);
+        }
+
+        [TestMethod]
+        public void MultipleDeclarationsOfSameInterfaceThrows()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            
+            var action = new Action(() =>
+            {
+                di.RegisterSingleton<IIndependentService, IndependentService>();
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void CatchSpecificException()
+        {
+            var di = new ServiceManager();
+            var thrown = false;
+            di.HandleException<InvalidOperationException>((sp, e) =>
+            {
+                thrown = true;
+                return false;
+            });
+
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+
+            thrown.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void CatchSpecificExceptionAndRethrow()
+        {
+            var di = new ServiceManager();
+            var thrown = false;
+            di.HandleException<InvalidOperationException>((sp, e) =>
+            {
+                thrown = true;
+                return true;
+            });
+
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            var action = new Action(() =>
+            {
+                di.RegisterSingleton<IIndependentService, IndependentService>();
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+            thrown.Should().BeTrue();
         }
     }
 }

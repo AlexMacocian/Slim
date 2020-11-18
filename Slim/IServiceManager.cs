@@ -2,30 +2,19 @@
 
 namespace Slim
 {
-    public interface IServiceManager : IServiceProvider
+    /// <summary>
+    /// Interface for <see cref="ServiceManager"/>.
+    /// </summary>
+    public interface IServiceManager : IServiceProvider, IServiceProducer
     {
-        void RegisterTransient<TInterface, TClass>()
-            where TInterface : class
-            where TClass : TInterface;
-
-        void RegisterTransient<TInterface, TClass>(Func<IServiceProvider, TClass> serviceFactory)
-            where TInterface : class
-            where TClass : TInterface;
-
-        void RegisterSingleton<TInterface, TClass>()
-            where TInterface : class
-            where TClass : TInterface;
-
-        void RegisterSingleton<TInterface, TClass>(Func<IServiceProvider, TClass> serviceFactory)
-            where TInterface : class
-            where TClass : TInterface;
-
-        void RegisterTransient(Type tInterface, Type tClass);
-
-        void RegisterTransient(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory);
-
-        void RegisterSingleton(Type tInterface, Type tClass);
-
-        void RegisterSingleton<TInterface, TClass>(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory);
+        /// <summary>
+        /// Marks a type of exception to be caught and handled.
+        /// </summary>
+        /// <typeparam name="T">Type of exception to catch.</typeparam>
+        /// <param name="handle">Handler of the exception. Handler returns true if the exception should be thrown again.</param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        void HandleException<T>(Func<IServiceProvider, T, bool> handle)
+            where T : Exception;
     }
 }

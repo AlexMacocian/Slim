@@ -1,105 +1,248 @@
 ﻿using Slim.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Slim
 {
-    public class ServiceManager : IServiceManager, IServiceProvider
+    /// <summary>
+    /// <see cref="ServiceManager"/> responsible with storing and resolving services.
+    /// </summary>
+    public class ServiceManager : IServiceManager
     {
         private Dictionary<Type, (Type, Lifetime)> InterfaceMapping { get; } = new Dictionary<Type, (Type, Lifetime)>();
         private Dictionary<Type, object> Singletons { get; } = new Dictionary<Type, object>();
         private Dictionary<Type, Delegate> Factories { get; } = new Dictionary<Type, Delegate>();
+        private Dictionary<Type, Delegate> ExceptionHandlers { get; } = new Dictionary<Type, Delegate>();
 
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">Type of interface.</typeparam>
+        /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient<TInterface, TClass>()
             where TInterface : class
             where TClass : TInterface
         {
-            lock (this)
-            {
-                this.InterfaceMapping[typeof(TInterface)] = (typeof(TClass), Lifetime.Transient);
-            }
+            this.Map(typeof(TInterface), typeof(TClass), Lifetime.Transient);
         }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">Type of interface.</typeparam>
+        /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <param name="serviceFactory">Factory for the implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient<TInterface, TClass>(Func<IServiceProvider, TClass> serviceFactory)
             where TInterface : class
             where TClass : TInterface
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            lock (this)
-            {
-                this.InterfaceMapping[typeof(TInterface)] = (typeof(TClass), Lifetime.Transient);
-                this.Factories[typeof(TInterface)] = serviceFactory;
-            }
+            this.Map(typeof(TInterface), typeof(TClass), Lifetime.Transient);
+            this.RegisterFactory(typeof(TInterface), serviceFactory);
         }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">Type of interface.</typeparam>
+        /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton<TInterface, TClass>()
             where TInterface : class
             where TClass : TInterface
         {
-            this.InterfaceMapping[typeof(TInterface)] = (typeof(TClass), Lifetime.Singleton);
+            this.Map(typeof(TInterface), typeof(TClass), Lifetime.Singleton);
         }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">Type of interface.</typeparam>
+        /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <param name="serviceFactory">Factory for implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton<TInterface, TClass>(Func<IServiceProvider, TClass> serviceFactory)
             where TInterface : class
             where TClass : TInterface
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            lock (this)
-            {
-                this.InterfaceMapping[typeof(TInterface)] = (typeof(TClass), Lifetime.Singleton);
-                this.Factories[typeof(TInterface)] = serviceFactory;
-            }
+            this.Map(typeof(TInterface), typeof(TClass), Lifetime.Singleton);
+            this.RegisterFactory(typeof(TInterface), serviceFactory);
         }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of interface.</param>
+        /// <param name="tClass">Type of implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient(Type tInterface, Type tClass)
         {
-            lock (this)
-            {
-                this.InterfaceMapping[tInterface] = (tClass, Lifetime.Transient);
-            }
+            this.Map(tInterface, tClass, Lifetime.Transient);
         }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of interface.</param>
+        /// <param name="tClass">Type of implementation.</param>
+        /// <param name="serviceFactory">Factory for implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory)
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            lock (this)
-            {
-                this.InterfaceMapping[tInterface] = (tClass, Lifetime.Transient);
-                this.Factories[tInterface] = serviceFactory;
-            }
+            this.Map(tInterface, tClass, Lifetime.Transient);
+            this.RegisterFactory(tInterface, serviceFactory);
         }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of interface.</param>
+        /// <param name="tClass">Type of implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton(Type tInterface, Type tClass)
         {
-            lock (this)
-            {
-                this.InterfaceMapping[tInterface] = (tClass, Lifetime.Singleton);
-            }
+            this.Map(tInterface, tClass, Lifetime.Singleton);
         }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of interface.</param>
+        /// <param name="tClass">Type of implementation.</param>
+        /// <param name="serviceFactory">Factory for implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton<TInterface, TClass>(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory)
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            lock (this)
-            {
-                this.InterfaceMapping[tInterface] = (tClass, Lifetime.Singleton);
-                this.Factories[tInterface] = serviceFactory;
-            }
+            this.Map(tInterface, tClass, Lifetime.Singleton);
+            this.RegisterFactory(tInterface, serviceFactory);
         }
 
+        /// <summary>
+        /// Resolves and returns the required service.
+        /// </summary>
+        /// <typeparam name="TInterface">Type of required service.</typeparam>
+        /// <returns>Required service.</returns>
+        /// <exception cref="DependencyInjectionException">Thrown when unable to resolve required service.</exception>
         public TInterface GetService<TInterface>() where TInterface : class
         {
-            lock (this)
-            {
-                return GetObject(typeof(TInterface)) as TInterface;
-            }
+            return PrepareAndGetService(typeof(TInterface)) as TInterface;
         }
+        /// <summary>
+        /// Resolves and returns the required service.
+        /// </summary>
+        /// <param name="type">Type of required service.</param>
+        /// <returns>Required service.</returns>
+        /// <exception cref="DependencyInjectionException">Thrown when unable to resolve required service.</exception>
         public object GetService(Type type)
         {
-            lock (this)
-            {
-                return GetObject(type);
-            }
+            return PrepareAndGetService(type);
         }
 
+        /// <summary>
+        /// Marks a type of exception to be caught and handled.
+        /// </summary>
+        /// <typeparam name="T">Type of exception to catch.</typeparam>
+        /// <param name="handle">Handler of the exception. Handler returns true if the exception should be thrown again.</param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void HandleException<T>(Func<IServiceProvider, T, bool> handle)
+            where T : Exception
+        {
+            this.ExceptionHandlers.Add(typeof(T), handle);
+        }
+
+        private object PrepareAndGetService(Type tInterface)
+        {
+            try
+            {
+                lock (this)
+                {
+                    return GetObject(tInterface);
+                }
+            }
+            catch(Exception e)
+            {
+                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
+                {
+                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
+                    if (shouldThrow)
+                    {
+                        throw;
+                    }
+                }
+                else
+                {
+                    throw;
+                }
+                return null;
+            }
+        }
+        private void RegisterFactory(Type tinterface, Delegate factory)
+        {
+            try
+            {
+                lock (this)
+                {
+                    this.Factories[tinterface] = factory;
+                }
+            }
+            catch(Exception e)
+            {
+                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
+                {
+                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
+                    if (shouldThrow)
+                    {
+                        throw;
+                    }
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        private void Map(Type tinterface, Type tclass, Lifetime lifetime)
+        {
+            try
+            {
+                lock (this)
+                {
+                    if (this.InterfaceMapping.ContainsKey(tinterface))
+                    {
+                        throw new InvalidOperationException($"{nameof(ServiceManager)} already contains an entry for type {tinterface}");
+                    }
+                    this.InterfaceMapping[tinterface] = (tclass, lifetime);
+                }
+            }
+            catch(Exception e)
+            {
+                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
+                {
+                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
+                    if (shouldThrow)
+                    {
+                        throw;
+                    }
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
         private object GetObject(Type tInterface)
         {
             if (!this.InterfaceMapping.TryGetValue(tInterface, out var mappingTuple))
