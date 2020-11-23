@@ -18,6 +18,14 @@
             <exception cref="T:System.ArgumentException"></exception>
             <exception cref="T:System.ArgumentNullException"></exception>
         </member>
+        <member name="M:Slim.IServiceManager.Clear">
+            <summary>
+            Clears all registered types, singletons, factories and exception handlers.
+            </summary>
+            <remarks>
+            Calls <see cref="M:System.IDisposable.Dispose"/> on all <see cref="T:System.IDisposable"/> singletons.
+            </remarks>
+        </member>
         <member name="T:Slim.IServiceProducer">
             <summary>
             Interface allowing to produce services for the <see cref="T:Slim.ServiceManager"/>.
@@ -225,6 +233,14 @@
             <param name="handle">Handler of the exception. Handler returns true if the exception should be thrown again.</param>
             <exception cref="T:System.ArgumentException"></exception>
             <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Slim.ServiceManager.Clear">
+            <summary>
+            Clears all registered types, singletons, factories and exception handlers.
+            </summary>
+            <remarks>
+            Calls <see cref="M:System.IDisposable.Dispose"/> on all <see cref="T:System.IDisposable"/> singletons.
+            </remarks>
         </member>
     </members>
 </doc>

@@ -16,5 +16,12 @@ namespace Slim
         /// <exception cref="ArgumentNullException"></exception>
         void HandleException<T>(Func<IServiceProvider, T, bool> handle)
             where T : Exception;
+        /// <summary>
+        /// Clears all registered types, singletons, factories and exception handlers.
+        /// </summary>
+        /// <remarks>
+        /// Calls <see cref="IDisposable.Dispose"/> on all <see cref="IDisposable"/> singletons.
+        /// </remarks>
+        void Clear();
     }
 }

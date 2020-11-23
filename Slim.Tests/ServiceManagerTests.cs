@@ -181,5 +181,32 @@ namespace Slim.Tests
             action.Should().Throw<InvalidOperationException>();
             thrown.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void ClearAndGetShouldThrow()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            
+            var action = new Action(() =>
+            {
+                di.GetService<IndependentService>();
+            });
+            di.Clear();
+
+            action.Should().Throw<DependencyInjectionException>();
+        }
+
+        [TestMethod]
+        public void ClearShouldCallDispose()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIDisposableService, IDisposableService>();
+            var disposableService = (IDisposableService)di.GetService<IIDisposableService>();
+            
+            di.Clear();
+
+            disposableService.DisposeCalled.Should().BeTrue();
+        }
     }
 }

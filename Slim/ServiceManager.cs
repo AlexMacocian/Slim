@@ -162,6 +162,22 @@ namespace Slim
         {
             this.ExceptionHandlers.Add(typeof(T), handle);
         }
+        /// <summary>
+        /// Clears all registered types, singletons, factories and exception handlers.
+        /// </summary>
+        /// <remarks>
+        /// Calls <see cref="IDisposable.Dispose"/> on all <see cref="IDisposable"/> singletons.
+        /// </remarks>
+        public void Clear()
+        {
+            this.InterfaceMapping.Clear();
+            foreach(var singleton in this.Singletons.Values.Where(s => s is IDisposable).Select(s => (IDisposable)s))
+            {
+                singleton.Dispose();
+            }
+            this.Factories.Clear();
+            this.ExceptionHandlers.Clear();
+        }
 
         private object PrepareAndGetService(Type tInterface)
         {
