@@ -208,5 +208,28 @@ namespace Slim.Tests
 
             disposableService.DisposeCalled.Should().BeTrue();
         }
+        
+        [TestMethod]
+        public void BuildAllSingletons()
+        {
+            var shouldCallConstructor = false;
+            var shouldNotCallConstructor = false;
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>(sp =>
+            {
+                shouldCallConstructor = true;
+                return new IndependentService();
+            });
+            di.RegisterTransient<IDependentService, DependentService>(sp =>
+            {
+                shouldNotCallConstructor = true;
+                return new DependentService(sp.GetService<IIndependentService>());
+            });
+
+            di.BuildSingletons();
+
+            shouldCallConstructor.Should().BeTrue();
+            shouldNotCallConstructor.Should().BeFalse();
+        }
     }
 }

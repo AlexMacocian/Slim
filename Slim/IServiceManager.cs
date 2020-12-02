@@ -8,6 +8,10 @@ namespace Slim
     public interface IServiceManager : IServiceProvider, IServiceProducer
     {
         /// <summary>
+        /// Builds all registered singletons.
+        /// </summary>
+        void BuildSingletons();
+        /// <summary>
         /// Marks a type of exception to be caught and handled.
         /// </summary>
         /// <typeparam name="T">Type of exception to catch.</typeparam>
