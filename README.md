@@ -33,3 +33,8 @@ In case of reinitialization, call:
 serviceManager.Clear();
 ```
 ``` serviceManager.Clear ``` calls ``` IDisposable.Dispose ``` on singletons that implement ``` IDisposable ```.
+
+To build all singletons currently registered, call:
+```c#
+serviceManager.BuildSingletons();
+```

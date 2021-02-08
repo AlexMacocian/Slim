@@ -178,6 +178,16 @@ namespace Slim
             this.Factories.Clear();
             this.ExceptionHandlers.Clear();
         }
+        /// <summary>
+        /// Build all registered singletons.
+        /// </summary>
+        public void BuildSingletons()
+        {
+            foreach(var mapping in this.InterfaceMapping.Where(map => map.Value.Item2 == Lifetime.Singleton))
+            {
+                this.GetService(mapping.Key);
+            }
+        }
 
         private object PrepareAndGetService(Type tInterface)
         {
