@@ -121,7 +121,7 @@ namespace Slim
         /// <param name="serviceFactory">Factory for implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterSingleton<TInterface, TClass>(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory)
+        public void RegisterSingleton(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory)
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
