@@ -8,6 +8,11 @@ namespace Slim
     public interface IServiceManager : IServiceProvider, IServiceProducer
     {
         /// <summary>
+        /// Register the current service manager as a valid dependency.
+        /// </summary>
+        /// <remarks>Same functionality as calling <see cref="IServiceProducer.RegisterSingleton(Type, Func{IServiceProvider, object})" /> with current <see cref="IServiceManager"/>.</remarks>
+        void RegisterServiceManager();
+        /// <summary>
         /// Builds all registered singletons.
         /// </summary>
         void BuildSingletons();

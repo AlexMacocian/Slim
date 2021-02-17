@@ -145,6 +145,68 @@ namespace Slim.Tests
         }
 
         [TestMethod]
+        public void MultiInterfaceDeclarationReturnsSameSingleton()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<MultiInterfaceService>();
+
+            var singleton1 = di.GetService<IMultiInterfaceService1>();
+            var singleton2 = di.GetService<IMultiInterfaceService2>();
+
+            singleton1.Should().Be(singleton2);
+        }
+
+        [TestMethod]
+        public void MultiInterfaceDeclarationReturnsDifferentTransient()
+        {
+            var di = new ServiceManager();
+            di.RegisterTransient<MultiInterfaceService>();
+
+            var transient1 = di.GetService<IMultiInterfaceService1>();
+            var transient2 = di.GetService<IMultiInterfaceService2>();
+
+            transient1.Should().NotBe(transient2);
+        }
+
+        [TestMethod]
+        public void MultiInterfaceDeclarationWithFactoryReturnsSameSingleton()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton(sp => new MultiInterfaceService());
+
+            var singleton1 = di.GetService<IMultiInterfaceService1>();
+            var singleton2 = di.GetService<IMultiInterfaceService2>();
+
+            singleton1.Should().Be(singleton2);
+        }
+
+        [TestMethod]
+        public void MultiInterfaceDeclarationWithFactoryReturnsDifferentTransient()
+        {
+            var di = new ServiceManager();
+            di.RegisterTransient(sp => new MultiInterfaceService());
+
+            var transient1 = di.GetService<IMultiInterfaceService1>();
+            var transient2 = di.GetService<IMultiInterfaceService2>();
+
+            transient1.Should().NotBe(transient2);
+        }
+
+        [TestMethod]
+        public void RegisterServiceManagerSingletonRegistersCurrentServiceManager()
+        {
+            var di = new ServiceManager();
+            di.RegisterServiceManager();
+            di.RegisterSingleton<IDependentOnServiceManagerService, DependentOnServiceManagerService>();
+
+            var dependentService = di.GetService<IDependentOnServiceManagerService>();
+
+            dependentService.ServiceManager.Should().Be(di);
+            dependentService.ServiceProducer.Should().Be(di);
+            dependentService.ServiceProvider.Should().Be(di);
+        }
+
+        [TestMethod]
         public void CatchSpecificException()
         {
             var di = new ServiceManager();
