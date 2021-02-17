@@ -15,10 +15,22 @@ serviceManager.GetService<IService2>();
 
 To manage the lifetime of the objects, use ``` serviceManager.RegisterSingleton ``` or ``` serviceManager.RegisterTransient ```.
 
+Can register a services for all interaces it implements:
+```c#
+serviceManager.RegisterSingleton<Service1>();
+serviceManager.GetService<I1Service1>();
+serviceManager.GetService<I2Service1>();
+```
+
 Supports both generics or arguments as types:
 ```c#
 serviceManager.RegisterTransient<IService1, Service1>();
 serviceManager.RegisterTransient(typeof(IService2), typeof(Service2));
+```
+
+Can register current service manager as a valid dependency:
+```c#
+serviceManager.RegisterServiceManager();
 ```
 
 Can handle multiple types of exceptions:
