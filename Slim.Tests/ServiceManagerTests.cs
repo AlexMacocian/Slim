@@ -293,5 +293,27 @@ namespace Slim.Tests
             shouldCallConstructor.Should().BeTrue();
             shouldNotCallConstructor.Should().BeFalse();
         }
+
+        [TestMethod]
+        public void MultipleConstructorsShouldFindUsableOne()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, MultiConstructorService>();
+
+            var service = di.GetService<IIndependentService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<MultiConstructorService>();
+        }
+
+        [TestMethod]
+        public void NoInterfaceServiceShouldReturnService()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<NoInterfaceService>();
+
+            var service = di.GetService<NoInterfaceService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<NoInterfaceService>();
+        }
     }
 }

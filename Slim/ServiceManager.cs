@@ -9,7 +9,7 @@ namespace Slim
     /// <summary>
     /// <see cref="ServiceManager"/> responsible with storing and resolving services.
     /// </summary>
-    public class ServiceManager : IServiceManager
+    public sealed class ServiceManager : IServiceManager
     {
         private Dictionary<Type, (Type, Lifetime)> InterfaceMapping { get; } = new Dictionary<Type, (Type, Lifetime)>();
         private Dictionary<Type, object> Singletons { get; } = new Dictionary<Type, object>();
@@ -26,7 +26,7 @@ namespace Slim
             where TInterface : class
             where TClass : TInterface
         {
-            this.Map(typeof(TInterface), typeof(TClass), Lifetime.Transient);
+            this.RegisterService(typeof(TClass), Lifetime.Transient, typeof(TInterface));
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -42,8 +42,7 @@ namespace Slim
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            this.Map(typeof(TInterface), typeof(TClass), Lifetime.Transient);
-            this.RegisterFactory(typeof(TInterface), serviceFactory);
+            this.RegisterService(typeof(TClass), Lifetime.Transient, typeof(TInterface), serviceFactory);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -55,7 +54,7 @@ namespace Slim
             where TInterface : class
             where TClass : TInterface
         {
-            this.Map(typeof(TInterface), typeof(TClass), Lifetime.Singleton);
+            this.RegisterService(typeof(TClass), Lifetime.Singleton, typeof(TInterface));
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -71,8 +70,7 @@ namespace Slim
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            this.Map(typeof(TInterface), typeof(TClass), Lifetime.Singleton);
-            this.RegisterFactory(typeof(TInterface), serviceFactory);
+            this.RegisterService(typeof(TClass), Lifetime.Singleton, typeof(TInterface), serviceFactory);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -82,7 +80,7 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient(Type tInterface, Type tClass)
         {
-            this.Map(tInterface, tClass, Lifetime.Transient);
+            this.RegisterService(tClass, Lifetime.Transient, tInterface);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -96,8 +94,7 @@ namespace Slim
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            this.Map(tInterface, tClass, Lifetime.Transient);
-            this.RegisterFactory(tInterface, serviceFactory);
+            this.RegisterService(tClass, Lifetime.Transient, tInterface, serviceFactory);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -107,7 +104,7 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton(Type tInterface, Type tClass)
         {
-            this.Map(tInterface, tClass, Lifetime.Singleton);
+            this.RegisterService(tClass, Lifetime.Singleton, tInterface);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -121,8 +118,7 @@ namespace Slim
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            this.Map(tInterface, tClass, Lifetime.Singleton);
-            this.RegisterFactory(tInterface, serviceFactory);
+            this.RegisterService(tClass, Lifetime.Singleton, tInterface, serviceFactory);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -132,10 +128,7 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton<TClass>() where TClass : class
         {
-            foreach(var i in typeof(TClass).GetInterfaces())
-            {
-                this.Map(i, typeof(TClass), Lifetime.Singleton);
-            }
+            this.RegisterService(typeof(TClass), Lifetime.Singleton);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -149,11 +142,7 @@ namespace Slim
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            foreach (var i in typeof(TClass).GetInterfaces())
-            {
-                this.Map(i, typeof(TClass), Lifetime.Singleton);
-                this.RegisterFactory(i, serviceFactory);
-            }
+            this.RegisterService(typeof(TClass), Lifetime.Singleton, null, serviceFactory);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -163,10 +152,7 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient<TClass>() where TClass : class
         {
-            foreach (var i in typeof(TClass).GetInterfaces())
-            {
-                this.Map(i, typeof(TClass), Lifetime.Transient);
-            }
+            this.RegisterService(typeof(TClass), Lifetime.Transient);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -180,11 +166,7 @@ namespace Slim
         {
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
-            foreach (var i in typeof(TClass).GetInterfaces())
-            {
-                this.Map(i, typeof(TClass), Lifetime.Transient);
-                this.RegisterFactory(i, serviceFactory);
-            }
+            this.RegisterService(typeof(TClass), Lifetime.Transient, null, serviceFactory);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -194,10 +176,7 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient(Type tClass)
         {
-            foreach (var i in tClass.GetInterfaces())
-            {
-                this.Map(i, tClass, Lifetime.Transient);
-            }
+            this.RegisterService(tClass, Lifetime.Transient);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -209,11 +188,7 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient(Type tClass, Func<IServiceProvider, object> serviceFactory)
         {
-            foreach (var i in tClass.GetInterfaces())
-            {
-                this.Map(i, tClass, Lifetime.Transient);
-                this.RegisterFactory(i, serviceFactory);
-            }
+            this.RegisterService(tClass, Lifetime.Transient, null, serviceFactory);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -223,10 +198,7 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton(Type tClass)
         {
-            foreach (var i in tClass.GetInterfaces())
-            {
-                this.Map(i, tClass, Lifetime.Singleton);
-            }
+            this.RegisterService(tClass, Lifetime.Singleton);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -238,11 +210,7 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton(Type tClass, Func<IServiceProvider, object> serviceFactory)
         {
-            foreach (var i in tClass.GetInterfaces())
-            {
-                this.Map(i, tClass, Lifetime.Singleton);
-                this.RegisterFactory(i, serviceFactory);
-            }
+            this.RegisterService(tClass, Lifetime.Singleton, null, serviceFactory);
         }
 
         /// <summary>
@@ -251,11 +219,7 @@ namespace Slim
         /// <remarks>Same functionality as calling <see cref="IServiceProducer.RegisterSingleton(Type, Func{IServiceProvider, object})" /> with current <see cref="IServiceManager"/>.</remarks>
         public void RegisterServiceManager()
         {
-            foreach(var i in this.GetType().GetInterfaces())
-            {
-                this.Map(i, this.GetType(), Lifetime.Singleton);
-                this.RegisterFactory(i, new Func<IServiceProvider, object>((sp) => { return this; }));
-            }
+            this.RegisterService(typeof(ServiceManager), Lifetime.Singleton, null, new Func<IServiceProvider, object>((sp) => { return this; }));
         }
 
         /// <summary>
@@ -318,6 +282,34 @@ namespace Slim
             }
         }
 
+        private void RegisterService(Type tClass, Lifetime lifetime, Type tInterface = null, Delegate serviceFactory = null)
+        {
+            if (tInterface is not null)
+            {
+                this.Map(tInterface, tClass, lifetime);
+                if (serviceFactory is not null)
+                {
+                    this.RegisterFactory(tInterface, serviceFactory);
+                }
+
+                return;
+            }
+
+            foreach (var i in tClass.GetInterfaces())
+            {
+                this.Map(i, tClass, lifetime);
+                if (serviceFactory is not null)
+                {
+                    this.RegisterFactory(i, serviceFactory);
+                }
+            }
+
+            this.Map(tClass, tClass, lifetime);
+            if (serviceFactory is not null)
+            {
+                this.RegisterFactory(tClass, serviceFactory);
+            }
+        }
         private object PrepareAndGetService(Type tInterface)
         {
             try
@@ -406,7 +398,7 @@ namespace Slim
             }
 
             (var type, var lifetime) = mappingTuple;
-            object obj = null;
+            object obj;
             if (lifetime == Lifetime.Singleton)
             {
                 if (!this.Singletons.TryGetValue(type, out obj))
@@ -482,7 +474,7 @@ namespace Slim
             {
                 if (!this.InterfaceMapping.TryGetValue(par.ParameterType, out var mappingTuple))
                 {
-                    throw new DependencyInjectionException($"No service registered with type {par.ParameterType}!");
+                    return null;
                 }
 
                 (var actualType, var lifetime) = mappingTuple;
