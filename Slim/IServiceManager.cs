@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Slim.Resolvers;
+using System;
 
 namespace Slim
 {
@@ -32,5 +33,10 @@ namespace Slim
         /// Calls <see cref="IDisposable.Dispose"/> on all <see cref="IDisposable"/> singletons.
         /// </remarks>
         void Clear();
+        /// <summary>
+        /// Register a resolver that manually resolves dependencies.
+        /// </summary>
+        /// <param name="dependencyResolver">Resolver that manually creates a dependency.</param>
+        void RegisterResolver(IDependencyResolver dependencyResolver);
     }
 }

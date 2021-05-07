@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Slim.Exceptions;
 using Slim.Tests.Models;
+using Slim.Tests.Resolvers;
 using System;
 
 namespace Slim.Tests
@@ -314,6 +315,62 @@ namespace Slim.Tests
             var service = di.GetService<NoInterfaceService>();
             service.Should().NotBeNull();
             service.Should().BeOfType<NoInterfaceService>();
+        }
+
+        [TestMethod]
+        public void UseResolverToResolveService()
+        {
+            var di = new ServiceManager();
+            var resolver = new IndependentServiceResolver();
+            di.RegisterResolver(resolver);
+            di.RegisterTransient<IIndependentService, IndependentService>();
+
+            var service = di.GetService<IIndependentService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<IndependentService>();
+            resolver.Called.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void UseResolverCalledOnceForSingleton()
+        {
+            var di = new ServiceManager();
+            var resolver = new IndependentServiceResolver();
+            di.RegisterResolver(resolver);
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+
+            var service = di.GetService<IIndependentService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<IndependentService>();
+            resolver.Called.Should().Be(1);
+
+            var service2 = di.GetService<IIndependentService>();
+            service2.Should().NotBeNull();
+            service2.Should().BeOfType<IndependentService>();
+            resolver.Called.Should().Be(1);
+
+            service.Should().Be(service2);
+        }
+
+        [TestMethod]
+        public void UseResolverCalledMultipleForTransient()
+        {
+            var di = new ServiceManager();
+            var resolver = new IndependentServiceResolver();
+            di.RegisterResolver(resolver);
+            di.RegisterTransient<IIndependentService, IndependentService>();
+
+            var service = di.GetService<IIndependentService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<IndependentService>();
+            resolver.Called.Should().Be(1);
+
+            var service2 = di.GetService<IIndependentService>();
+            service2.Should().NotBeNull();
+            service2.Should().BeOfType<IndependentService>();
+            resolver.Called.Should().Be(1);
+
+            service.Should().Be(service2);
         }
     }
 }

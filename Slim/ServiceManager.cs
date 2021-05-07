@@ -1,4 +1,5 @@
 ﻿using Slim.Exceptions;
+using Slim.Resolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace Slim
         private Dictionary<Type, object> Singletons { get; } = new Dictionary<Type, object>();
         private Dictionary<Type, Delegate> Factories { get; } = new Dictionary<Type, Delegate>();
         private Dictionary<Type, Delegate> ExceptionHandlers { get; } = new Dictionary<Type, Delegate>();
+        private List<IDependencyResolver> Resolvers { get; } = new List<IDependencyResolver>();
 
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -281,6 +283,17 @@ namespace Slim
                 this.GetService(mapping.Key);
             }
         }
+        /// <summary>
+        /// Register a <see cref="IDependencyResolver"/> that manually resolves dependencies.
+        /// </summary>
+        /// <remarks>
+        /// This resolver will be called before auto-resolving a dependency. If resolver can handle the dependency, <see cref="IServiceManager"/> will return the resolved value.
+        /// </remarks>
+        /// <param name="dependencyResolver"><see cref="IDependencyResolver"/> that manually creates a dependency.</param>
+        public void RegisterResolver(IDependencyResolver dependencyResolver)
+        {
+            this.Resolvers.Add(dependencyResolver);
+        }
 
         private void RegisterService(Type tClass, Lifetime lifetime, Type tInterface = null, Delegate serviceFactory = null)
         {
@@ -428,6 +441,14 @@ namespace Slim
         }
         private object TryImplementService(Type type)
         {
+            foreach(var resolver in this.Resolvers)
+            {
+                if (resolver.CanResolve(type))
+                {
+                    return resolver.Resolve(type);
+                }
+            }
+
             (var implementType, _) = InterfaceMapping[type];
             if (this.Factories.TryGetValue(type, out var factory))
             {
