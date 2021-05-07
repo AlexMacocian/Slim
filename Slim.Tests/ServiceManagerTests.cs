@@ -368,9 +368,7 @@ namespace Slim.Tests
             var service2 = di.GetService<IIndependentService>();
             service2.Should().NotBeNull();
             service2.Should().BeOfType<IndependentService>();
-            resolver.Called.Should().Be(1);
-
-            service.Should().Be(service2);
+            resolver.Called.Should().Be(2);
         }
     }
 }
