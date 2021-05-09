@@ -18,7 +18,7 @@ namespace Slim.Tests.Resolvers
             return false;
         }
 
-        public object Resolve(Type type)
+        public object Resolve(IServiceProvider serviceProvider, Type type)
         {
             this.Called++;
             return new IndependentService();

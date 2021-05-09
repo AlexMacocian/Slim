@@ -445,7 +445,7 @@ namespace Slim
             {
                 if (resolver.CanResolve(type))
                 {
-                    return resolver.Resolve(type);
+                    return resolver.Resolve(this, type);
                 }
             }
 
