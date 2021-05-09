@@ -37,6 +37,12 @@
             Calls <see cref="M:System.IDisposable.Dispose"/> on all <see cref="T:System.IDisposable"/> singletons.
             </remarks>
         </member>
+        <member name="M:Slim.IServiceManager.RegisterResolver(Slim.Resolvers.IDependencyResolver)">
+            <summary>
+            Register a resolver that manually resolves dependencies.
+            </summary>
+            <param name="dependencyResolver">Resolver that manually creates a dependency.</param>
+        </member>
         <member name="T:Slim.IServiceProducer">
             <summary>
             Interface allowing to produce services for the <see cref="T:Slim.ServiceManager"/>.
@@ -399,6 +405,15 @@
             <summary>
             Build all registered singletons.
             </summary>
+        </member>
+        <member name="M:Slim.ServiceManager.RegisterResolver(Slim.Resolvers.IDependencyResolver)">
+            <summary>
+            Register a <see cref="T:Slim.Resolvers.IDependencyResolver"/> that manually resolves dependencies.
+            </summary>
+            <remarks>
+            This resolver will be called before auto-resolving a dependency. If resolver can handle the dependency, <see cref="T:Slim.IServiceManager"/> will return the resolved value.
+            </remarks>
+            <param name="dependencyResolver"><see cref="T:Slim.Resolvers.IDependencyResolver"/> that manually creates a dependency.</param>
         </member>
     </members>
 </doc>

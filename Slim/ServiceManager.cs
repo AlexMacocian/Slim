@@ -495,6 +495,22 @@ namespace Slim
             {
                 if (!this.InterfaceMapping.TryGetValue(par.ParameterType, out var mappingTuple))
                 {
+                    object resolvedParam = null;
+                    foreach (var resolver in this.Resolvers)
+                    {
+                        if (resolver.CanResolve(par.ParameterType))
+                        {
+                            resolvedParam = resolver.Resolve(this, par.ParameterType);
+                            continue;
+                        }
+                    }
+
+                    if (resolvedParam is not null)
+                    {
+                        parameterImplementationList.Add(resolvedParam);
+                        continue;
+                    }
+
                     return null;
                 }
 

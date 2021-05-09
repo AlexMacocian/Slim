@@ -370,5 +370,18 @@ namespace Slim.Tests
             service2.Should().BeOfType<IndependentService>();
             resolver.Called.Should().Be(2);
         }
+
+        [TestMethod]
+        public void UseResolverForUndeclaredService()
+        {
+            var di = new ServiceManager();
+            var resolver = new IndependentServiceResolver();
+            di.RegisterResolver(resolver);
+            di.RegisterTransient<IDependentService, DependentService>();
+
+            var service = di.GetService<IDependentService>();
+            service.Should().NotBeNull();
+            resolver.Called.Should().Be(1);
+        }
     }
 }
