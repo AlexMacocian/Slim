@@ -405,9 +405,10 @@ namespace Slim
         }
         private object GetObject(Type tInterface)
         {
-            if (!this.InterfaceMapping.TryGetValue(tInterface, out var mappingTuple))
+            if (!this.InterfaceMapping.TryGetValue(tInterface, out var mappingTuple) &&
+                this.Resolvers.Any(resolver => resolver.CanResolve(tInterface)) is false)
             {
-                throw new DependencyInjectionException($"No registered service for type {tInterface.Name}!");
+                throw new DependencyInjectionException($"No registered service and no resolver can resolve for type {tInterface.Name}.");
             }
 
             (var type, var lifetime) = mappingTuple;
@@ -441,7 +442,7 @@ namespace Slim
         }
         private object TryImplementService(Type type)
         {
-            foreach(var resolver in this.Resolvers)
+            foreach (var resolver in this.Resolvers)
             {
                 if (resolver.CanResolve(type))
                 {

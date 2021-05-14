@@ -383,5 +383,23 @@ namespace Slim.Tests
             service.Should().NotBeNull();
             resolver.Called.Should().Be(1);
         }
+
+        [TestMethod]
+        public void UseResolverUsesSecondResolver()
+        {
+            var di = new ServiceManager();
+            di.RegisterResolver(new IndependentServiceResolver());
+            di.RegisterResolver(new DependentServiceResolver());
+            di.RegisterTransient<IIndependentService, IndependentService>();
+            di.RegisterTransient<IDependentService, DependentService>();
+
+            var service = di.GetService<IIndependentService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<IndependentService>();
+
+            var service2 = di.GetService<IDependentService>();
+            service2.Should().NotBeNull();
+            service2.Should().BeOfType<DependentService>();
+        }
     }
 }
