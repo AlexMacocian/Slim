@@ -45,7 +45,7 @@ jobs:
         RuntimeIdentifier: win-${{ matrix.targetplatform }}
 
     - name: Build Slim project
-      run: dotnet build Daybreak -c $env:Configuration
+      run: dotnet build Slim -c $env:Configuration
 
     - name: Push nuget package
       uses: brandedoutcast/publish-nuget@v2.5.5
