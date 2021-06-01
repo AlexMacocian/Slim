@@ -5,6 +5,8 @@ Uses lazy approach and only implements objects when called.
 
 Supports multiple Register calls without needing to rebuild.
 
+Supports scoped lifetime of services.
+
 To use, simply create and register types:
 ```c#
 var serviceManager = new ServiceManager();
@@ -13,7 +15,7 @@ serviceManager.RegisterSingleton<IService2, Service2>(sp => new Service2(sp.GetS
 serviceManager.GetService<IService2>();
 ```
 
-To manage the lifetime of the objects, use ``` serviceManager.RegisterSingleton ``` or ``` serviceManager.RegisterTransient ```.
+To manage the lifetime of the objects, use ``` serviceManager.RegisterSingleton ```, ``` serviceManager.RegisterTransient ``` or ``` serviceManager.RegisterScoped ```.
 
 Can register a services for all interaces it implements:
 ```c#
@@ -54,4 +56,9 @@ serviceManager.BuildSingletons();
 `IDependencyResolver` interface to implement manual resolvers for special cases. Register on the `IServiceManager` using:
 ```c#
 serviceManager.RegisterResolver(new SomeDependencyResolver());
+```
+
+To create a scope, call the following method and use the new instance of scoped IServiceProvider.
+```c#
+serviceManager.CreateScope();
 ```
