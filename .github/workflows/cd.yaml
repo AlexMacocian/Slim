@@ -11,7 +11,7 @@ on:
 jobs:
 
   build:
-
+    environment: Default
     strategy:
       matrix:
         targetplatform: [x64]
