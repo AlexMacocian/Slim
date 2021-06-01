@@ -50,3 +50,8 @@ To build all singletons currently registered, call:
 ```c#
 serviceManager.BuildSingletons();
 ```
+
+`IDependencyResolver` interface to implement manual resolvers for special cases. Register on the `IServiceManager` using:
+```c#
+serviceManager.RegisterResolver(new SomeDependencyResolver());
+```
