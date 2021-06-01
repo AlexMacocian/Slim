@@ -22,8 +22,7 @@ jobs:
       Configuration: Release
       Solution_Path: Slim.sln
       Test_Project_Path: Slim.Tests\Slim.Tests.csproj
-      Source_Project_Path: Slim\Slim.csproj
-      Actions_Allow_Unsecure_Commands: true
+      Source_Project_Path: \Slim\Slim.csproj
 
     steps:
     - name: Checkout
