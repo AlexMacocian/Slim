@@ -44,7 +44,7 @@ jobs:
       env:
         RuntimeIdentifier: win-${{ matrix.targetplatform }}
 
-    - name: Build Daybreak project
+    - name: Build Slim project
       run: dotnet build Daybreak -c $env:Configuration
 
     - name: Push nuget package
