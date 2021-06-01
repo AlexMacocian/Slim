@@ -346,12 +346,7 @@ namespace Slim
         /// <returns>Scoped <see cref="IServiceProvider"/>.</returns>
         public IServiceProvider CreateScope()
         {
-            return new ServiceManager(
-                interfaceMapping: this.InterfaceMapping,
-                factories: this.Factories,
-                exceptionHandlers: this.ExceptionHandlers,
-                resolvers: this.Resolvers,
-                singletons: this.GetSingletons());
+            return this.CreateScopeInner();
         }
         /// <summary>
         /// Resolves and returns the required service.
@@ -685,6 +680,15 @@ namespace Slim
             }
 
             return dictionary;
+        }
+        private ServiceManager CreateScopeInner()
+        {
+            var interfaceMapping = new Dictionary<Type, (Type, Lifetime)>(this.InterfaceMapping);
+            var factories = new Dictionary<Type, Delegate>(this.Factories);
+            var exceptionHandlers = new Dictionary<Type, Delegate>(this.ExceptionHandlers);
+            var resolvers = new List<IDependencyResolver>(this.Resolvers);
+            var singletons = this.GetSingletons();
+            return new ServiceManager(interfaceMapping, singletons, factories, exceptionHandlers, resolvers);
         }
     }
 }

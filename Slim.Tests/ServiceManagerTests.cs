@@ -458,5 +458,21 @@ namespace Slim.Tests
             dependentService1.Should().NotBeNull();
             dependentService2.Should().NotBeNull();
         }
+
+        [TestMethod]
+        public void ScopedManagerShouldHaveItsOwnLists()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            var scopedDi = di.CreateScope();
+
+            di.RegisterSingleton<IDependentService, DependentService>();
+            scopedDi.As<IServiceManager>().RegisterSingleton<IDependentService, DependentService>();
+
+            var dependentService1 = di.GetService<IDependentService>();
+            var dependentService2 = scopedDi.GetService<IDependentService>();
+
+            dependentService1.Should().NotBe(dependentService2);
+        }
     }
 }
