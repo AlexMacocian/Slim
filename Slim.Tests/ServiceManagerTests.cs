@@ -401,5 +401,62 @@ namespace Slim.Tests
             service2.Should().NotBeNull();
             service2.Should().BeOfType<DependentService>();
         }
+
+        [TestMethod]
+        public void CreateScopeCreatesNewServiceProvider()
+        {
+            var di = new ServiceManager();
+            var scopedDi = di.CreateScope();
+            scopedDi.Should().NotBeNull();
+            scopedDi.Should().NotBe(di);
+        }
+
+        [TestMethod]
+        public void ScopedServicesShouldBeNewUnderScopedProvider()
+        {
+            var di = new ServiceManager();
+            di.RegisterScoped<IIndependentService, IndependentService>();
+
+            var service = di.GetService<IIndependentService>();
+            var scopedDi = di.CreateScope();
+            var scopedService = scopedDi.GetService<IIndependentService>();
+
+            service.Should().NotBe(scopedService);
+        }
+
+        [TestMethod]
+        public void SingletonServicesShouldBeSameUnderScopedProvider()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+
+            var service = di.GetService<IIndependentService>();
+            var scopedDi = di.CreateScope();
+            var scopedService = scopedDi.GetService<IIndependentService>();
+
+            service.Should().Be(scopedService);
+        }
+
+        [TestMethod]
+        public void LifetimesShouldBeRespected()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            di.RegisterScoped<IDependentService, DependentService>();
+            di.BuildSingletons();
+            var scopedDi = di.CreateScope();
+
+            var independentService1 = di.GetService<IIndependentService>();
+            var dependentService1 = di.GetService<IDependentService>();
+            var independentService2 = scopedDi.GetService<IIndependentService>();
+            var dependentService2 = scopedDi.GetService<IDependentService>();
+
+            independentService1.Should().Be(independentService2);
+            dependentService1.Should().NotBe(dependentService2);
+            independentService1.Should().NotBeNull();
+            independentService2.Should().NotBeNull();
+            dependentService1.Should().NotBeNull();
+            dependentService2.Should().NotBeNull();
+        }
     }
 }

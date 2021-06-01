@@ -84,6 +84,24 @@
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
+        <member name="M:Slim.IServiceProducer.RegisterScoped``1">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterScoped``1(System.Func{Slim.IServiceProvider,``0})">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <param name="serviceFactory">Factory for the implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
         <member name="M:Slim.IServiceProducer.RegisterTransient``2">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
@@ -120,6 +138,24 @@
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
+        <member name="M:Slim.IServiceProducer.RegisterScoped``2">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            </summary>
+            <typeparam name="TInterface">Type of interface.</typeparam>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterScoped``2(System.Func{Slim.IServiceProvider,``1})">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            </summary>
+            <typeparam name="TInterface">Type of interface.</typeparam>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <param name="serviceFactory">Factory for the implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
         <member name="M:Slim.IServiceProducer.RegisterTransient(System.Type,System.Type)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
@@ -149,6 +185,24 @@
         <member name="M:Slim.IServiceProducer.RegisterSingleton(System.Type,System.Type,System.Func{Slim.IServiceProvider,System.Object})">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
+            </summary>
+            <param name="tInterface">Type of interface.</param>
+            <param name="tClass">Type of implementation.</param>
+            <param name="serviceFactory">Factory for implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterScoped(System.Type,System.Type)">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            </summary>
+            <param name="tInterface">Type of interface.</param>
+            <param name="tClass">Type of implementation.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterScoped(System.Type,System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             </summary>
             <param name="tInterface">Type of interface.</param>
             <param name="tClass">Type of implementation.</param>
@@ -192,10 +246,34 @@
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
+        <member name="M:Slim.IServiceProducer.RegisterScoped(System.Type)">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <param name="tClass">Type of implementation.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterScoped(System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <param name="tClass">Type of implementation.</param>
+            <param name="serviceFactory">Factory for implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
         <member name="T:Slim.IServiceProvider">
             <summary>
             Interface allowing to request services from the <see cref="T:Slim.ServiceManager"/>.
             </summary>
+        </member>
+        <member name="M:Slim.IServiceProvider.CreateScope">
+            <summary>
+            Creates a scoped <see cref="T:Slim.IServiceProvider"/>.
+            </summary>
+            <returns>Scoped <see cref="T:Slim.IServiceProvider"/>.</returns>
         </member>
         <member name="M:Slim.IServiceProvider.GetService``1">
             <summary>
@@ -254,6 +332,24 @@
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
+        <member name="M:Slim.ServiceManager.RegisterScoped``2">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            </summary>
+            <typeparam name="TInterface">Type of interface.</typeparam>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.ServiceManager.RegisterScoped``2(System.Func{Slim.IServiceProvider,``1})">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            </summary>
+            <typeparam name="TInterface">Type of interface.</typeparam>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <param name="serviceFactory">Factory for implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
         <member name="M:Slim.ServiceManager.RegisterTransient(System.Type,System.Type)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
@@ -283,6 +379,24 @@
         <member name="M:Slim.ServiceManager.RegisterSingleton(System.Type,System.Type,System.Func{Slim.IServiceProvider,System.Object})">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
+            </summary>
+            <param name="tInterface">Type of interface.</param>
+            <param name="tClass">Type of implementation.</param>
+            <param name="serviceFactory">Factory for implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.ServiceManager.RegisterScoped(System.Type,System.Type)">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            </summary>
+            <param name="tInterface">Type of interface.</param>
+            <param name="tClass">Type of implementation.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.ServiceManager.RegisterScoped(System.Type,System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             </summary>
             <param name="tInterface">Type of interface.</param>
             <param name="tClass">Type of implementation.</param>
@@ -326,6 +440,24 @@
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
+        <member name="M:Slim.ServiceManager.RegisterScoped``1">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.ServiceManager.RegisterScoped``1(System.Func{Slim.IServiceProvider,``0})">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <param name="serviceFactory">Factory for the implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
         <member name="M:Slim.ServiceManager.RegisterTransient(System.Type)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
@@ -362,11 +494,35 @@
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
+        <member name="M:Slim.ServiceManager.RegisterScoped(System.Type)">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <param name="tClass">Type of implementation.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.ServiceManager.RegisterScoped(System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <param name="tClass">Type of implementation.</param>
+            <param name="serviceFactory">Factory for implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
         <member name="M:Slim.ServiceManager.RegisterServiceManager">
             <summary>
             Register the current service manager as a valid dependency.
             </summary>
             <remarks>Same functionality as calling <see cref="M:Slim.IServiceProducer.RegisterSingleton(System.Type,System.Func{Slim.IServiceProvider,System.Object})" /> with current <see cref="T:Slim.IServiceManager"/>.</remarks>
+        </member>
+        <member name="M:Slim.ServiceManager.CreateScope">
+            <summary>
+            Creates a scoped <see cref="T:Slim.IServiceProvider"/>.
+            </summary>
+            <returns>Scoped <see cref="T:Slim.IServiceProvider"/>.</returns>
         </member>
         <member name="M:Slim.ServiceManager.GetService``1">
             <summary>

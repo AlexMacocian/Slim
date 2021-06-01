@@ -3,6 +3,7 @@
     internal enum Lifetime
     {
         Transient,
-        Singleton
+        Singleton,
+        Scoped
     }
 }

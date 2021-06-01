@@ -9,6 +9,11 @@ namespace Slim
     public interface IServiceProvider
     {
         /// <summary>
+        /// Creates a scoped <see cref="IServiceProvider"/>.
+        /// </summary>
+        /// <returns>Scoped <see cref="IServiceProvider"/>.</returns>
+        IServiceProvider CreateScope();
+        /// <summary>
         /// Resolves and returns the required service.
         /// </summary>
         /// <typeparam name="TInterface">Type of required service.</typeparam>

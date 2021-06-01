@@ -13,10 +13,28 @@ namespace Slim
     public sealed class ServiceManager : IServiceManager
     {
         private Dictionary<Type, (Type, Lifetime)> InterfaceMapping { get; } = new Dictionary<Type, (Type, Lifetime)>();
-        private Dictionary<Type, object> Singletons { get; } = new Dictionary<Type, object>();
+        private Dictionary<Type, object> Instances { get; } = new Dictionary<Type, object>();
         private Dictionary<Type, Delegate> Factories { get; } = new Dictionary<Type, Delegate>();
         private Dictionary<Type, Delegate> ExceptionHandlers { get; } = new Dictionary<Type, Delegate>();
         private List<IDependencyResolver> Resolvers { get; } = new List<IDependencyResolver>();
+
+        public ServiceManager()
+        {
+        }
+
+        private ServiceManager(
+            Dictionary<Type, (Type, Lifetime)> interfaceMapping,
+            Dictionary<Type, object> singletons,
+            Dictionary<Type, Delegate> factories,
+            Dictionary<Type, Delegate> exceptionHandlers,
+            List<IDependencyResolver> resolvers)
+        {
+            this.InterfaceMapping = interfaceMapping;
+            this.Instances = singletons;
+            this.Factories = factories;
+            this.ExceptionHandlers = exceptionHandlers;
+            this.Resolvers = resolvers;
+        }
 
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -75,6 +93,34 @@ namespace Slim
             this.RegisterService(typeof(TClass), Lifetime.Singleton, typeof(TInterface), serviceFactory);
         }
         /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">Type of interface.</typeparam>
+        /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
+        public void RegisterScoped<TInterface, TClass>()
+            where TInterface : class
+            where TClass : TInterface
+        {
+            this.RegisterService(typeof(TClass), Lifetime.Scoped, typeof(TInterface));
+        }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">Type of interface.</typeparam>
+        /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <param name="serviceFactory">Factory for implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
+        public void RegisterScoped<TInterface, TClass>(Func<IServiceProvider, TClass> serviceFactory)
+            where TInterface : class
+            where TClass : TInterface
+        {
+            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+
+            this.RegisterService(typeof(TClass), Lifetime.Scoped, typeof(TInterface), serviceFactory);
+        }
+        /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// </summary>
         /// <param name="tInterface">Type of interface.</param>
@@ -121,6 +167,30 @@ namespace Slim
             if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
 
             this.RegisterService(tClass, Lifetime.Singleton, tInterface, serviceFactory);
+        }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of interface.</param>
+        /// <param name="tClass">Type of implementation.</param>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
+        public void RegisterScoped(Type tInterface, Type tClass)
+        {
+            this.RegisterService(tClass, Lifetime.Scoped, tInterface);
+        }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of interface.</param>
+        /// <param name="tClass">Type of implementation.</param>
+        /// <param name="serviceFactory">Factory for implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
+        public void RegisterScoped(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory)
+        {
+            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+
+            this.RegisterService(tClass, Lifetime.Scoped, tInterface, serviceFactory);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
@@ -171,6 +241,30 @@ namespace Slim
             this.RegisterService(typeof(TClass), Lifetime.Transient, null, serviceFactory);
         }
         /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
+        /// Registers the service for all interfaces it implements.
+        /// </summary>
+        /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
+        public void RegisterScoped<TClass>() where TClass : class
+        {
+            this.RegisterService(typeof(TClass), Lifetime.Scoped);
+        }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
+        /// Registers the service for all interfaces it implements.
+        /// </summary>
+        /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <param name="serviceFactory">Factory for the implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
+        public void RegisterScoped<TClass>(Func<IServiceProvider, TClass> serviceFactory) where TClass : class
+        {
+            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+
+            this.RegisterService(typeof(TClass), Lifetime.Scoped, null, serviceFactory);
+        }
+        /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
@@ -214,6 +308,28 @@ namespace Slim
         {
             this.RegisterService(tClass, Lifetime.Singleton, null, serviceFactory);
         }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
+        /// Registers the service for all interfaces it implements.
+        /// </summary>
+        /// <param name="tClass">Type of implementation.</param>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
+        public void RegisterScoped(Type tClass)
+        {
+            this.RegisterService(tClass, Lifetime.Scoped);
+        }
+        /// <summary>
+        /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
+        /// Registers the service for all interfaces it implements.
+        /// </summary>
+        /// <param name="tClass">Type of implementation.</param>
+        /// <param name="serviceFactory">Factory for implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
+        public void RegisterScoped(Type tClass, Func<IServiceProvider, object> serviceFactory)
+        {
+            this.RegisterService(tClass, Lifetime.Scoped, null, serviceFactory);
+        }
 
         /// <summary>
         /// Register the current service manager as a valid dependency.
@@ -224,6 +340,19 @@ namespace Slim
             this.RegisterService(typeof(ServiceManager), Lifetime.Singleton, null, new Func<IServiceProvider, object>((sp) => { return this; }));
         }
 
+        /// <summary>
+        /// Creates a scoped <see cref="IServiceProvider"/>.
+        /// </summary>
+        /// <returns>Scoped <see cref="IServiceProvider"/>.</returns>
+        public IServiceProvider CreateScope()
+        {
+            return new ServiceManager(
+                interfaceMapping: this.InterfaceMapping,
+                factories: this.Factories,
+                exceptionHandlers: this.ExceptionHandlers,
+                resolvers: this.Resolvers,
+                singletons: this.GetSingletons());
+        }
         /// <summary>
         /// Resolves and returns the required service.
         /// </summary>
@@ -266,7 +395,7 @@ namespace Slim
         public void Clear()
         {
             this.InterfaceMapping.Clear();
-            foreach(var singleton in this.Singletons.Values.Where(s => s is IDisposable).Select(s => (IDisposable)s))
+            foreach(var singleton in this.Instances.Values.Where(s => s is IDisposable).Select(s => (IDisposable)s))
             {
                 singleton.Dispose();
             }
@@ -413,9 +542,9 @@ namespace Slim
 
             (var type, var lifetime) = mappingTuple;
             object obj;
-            if (lifetime == Lifetime.Singleton)
+            if (lifetime == Lifetime.Singleton || lifetime == Lifetime.Scoped)
             {
-                if (!this.Singletons.TryGetValue(type, out obj))
+                if (!this.Instances.TryGetValue(type, out obj))
                 {
                     obj = this.TryImplementService(tInterface);
                 }
@@ -427,9 +556,9 @@ namespace Slim
 
             if (obj is object)
             {
-                if (lifetime == Lifetime.Singleton)
+                if (lifetime == Lifetime.Singleton || lifetime == Lifetime.Scoped)
                 {
-                    this.Singletons[type] = obj;
+                    this.Instances[type] = obj;
                 }
                 return obj;
             }
@@ -516,13 +645,13 @@ namespace Slim
                 }
 
                 (var actualType, var lifetime) = mappingTuple;
-                if (this.Singletons.TryGetValue(par.ParameterType, out var obj))
+                if (this.Instances.TryGetValue(par.ParameterType, out var obj))
                 {
                     parameterImplementationList.Add(obj);
                     continue;
                 }
 
-                if (this.Singletons.TryGetValue(actualType, out obj))
+                if (this.Instances.TryGetValue(actualType, out obj))
                 {
                     parameterImplementationList.Add(obj);
                     continue;
@@ -536,13 +665,26 @@ namespace Slim
 
                 if (lifetime == Lifetime.Singleton)
                 {
-                    this.Singletons[actualType] = obj;
+                    this.Instances[actualType] = obj;
                 }
 
                 parameterImplementationList.Add(obj);
             }
 
             return parameterImplementationList.ToArray();
+        }
+        private Dictionary<Type, object> GetSingletons()
+        {
+            var dictionary = new Dictionary<Type, object>();
+            foreach (var kvp in this.Instances)
+            {
+                if (this.InterfaceMapping.First(s => s.Value.Item1 == kvp.Key).Value.Item2 is not Lifetime.Scoped)
+                {
+                    dictionary.Add(kvp.Key, kvp.Value);
+                }
+            }
+
+            return dictionary;
         }
     }
 }
