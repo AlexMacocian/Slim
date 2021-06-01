@@ -22,7 +22,7 @@ jobs:
       Configuration: Release
       Solution_Path: Slim.sln
       Test_Project_Path: Slim.Tests\Slim.Tests.csproj
-      Source_Project_Path: \Slim\Slim.csproj
+      Source_Project_Path: Slim\Slim.csproj
       Actions_Allow_Unsecure_Commands: true
 
     steps:
@@ -50,6 +50,6 @@ jobs:
     - name: Push nuget package
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
-         PROJECT_FILE_PATH: $env:Source_Project_Path
+         PROJECT_FILE_PATH: Slim\Slim.csproj
          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
     
