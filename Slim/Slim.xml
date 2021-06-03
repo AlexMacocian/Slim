@@ -4,6 +4,36 @@
         <name>Slim</name>
     </assembly>
     <members>
+        <member name="T:Slim.Exceptions.DependencyInjectionException">
+            <summary>
+            Exception thrown when <see cref="T:Slim.IServiceManager"/> fails to create a service.
+            </summary>
+        </member>
+        <member name="M:Slim.Exceptions.DependencyInjectionException.#ctor">
+            <summary>
+            Creates a new instance of <see cref="T:Slim.Exceptions.DependencyInjectionException"/>.
+            </summary>
+        </member>
+        <member name="M:Slim.Exceptions.DependencyInjectionException.#ctor(System.String)">
+            <summary>
+            Creates a new instance of <see cref="T:Slim.Exceptions.DependencyInjectionException"/>.
+            </summary>
+            <param name="message">Message of the exception.</param>
+        </member>
+        <member name="M:Slim.Exceptions.DependencyInjectionException.#ctor(System.String,System.Exception)">
+            <summary>
+            Creates a new instance of <see cref="T:Slim.Exceptions.DependencyInjectionException"/>.
+            </summary>
+            <param name="message">Message of the exception.</param>
+            <param name="innerException">Inner exception.</param>
+        </member>
+        <member name="M:Slim.Exceptions.DependencyInjectionException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Creates a new instance of <see cref="T:Slim.Exceptions.DependencyInjectionException"/>.
+            </summary>
+            <param name="info">Serialization info.</param>
+            <param name="context">Streaming context.</param>
+        </member>
         <member name="T:Slim.IServiceManager">
             <summary>
             Interface for <see cref="T:Slim.ServiceManager"/>.
@@ -291,9 +321,34 @@
             <returns>Required service.</returns>
             <exception cref="T:Slim.Exceptions.DependencyInjectionException">Thrown when unable to resolve required service.</exception>
         </member>
+        <member name="T:Slim.Resolvers.IDependencyResolver">
+            <summary>
+            Resolver that can be added to a <see cref="T:Slim.IServiceManager"/> to manually resolve a dependency.
+            </summary>
+        </member>
+        <member name="M:Slim.Resolvers.IDependencyResolver.CanResolve(System.Type)">
+            <summary>
+            Returns true if the <see cref="T:Slim.Resolvers.IDependencyResolver"/> can resolve the dependency of provided <see cref="T:System.Type"/>.
+            </summary>
+            <param name="type"><see cref="T:System.Type"/> of dependency to be resolved.</param>
+            <returns>True if <see cref="T:Slim.Resolvers.IDependencyResolver"/> can resolve the dependency. Otherwise false.</returns>
+        </member>
+        <member name="M:Slim.Resolvers.IDependencyResolver.Resolve(Slim.IServiceProvider,System.Type)">
+            <summary>
+            Returns a resolved dependency of the provided type.
+            </summary>
+            <param name="serviceProvider">Reference to the calling <see cref="T:Slim.IServiceProvider"/>.</param>
+            <param name="type"><see cref="T:System.Type"/> of the dependency to be resolved.</param>
+            <returns>Resolved dependency of provided <see cref="T:System.Type"/>.</returns>
+        </member>
         <member name="T:Slim.ServiceManager">
             <summary>
             <see cref="T:Slim.ServiceManager"/> responsible with storing and resolving services.
+            </summary>
+        </member>
+        <member name="M:Slim.ServiceManager.#ctor">
+            <summary>
+            Creates an instance of <see cref="T:Slim.IServiceManager"/>.
             </summary>
         </member>
         <member name="M:Slim.ServiceManager.RegisterTransient``2">

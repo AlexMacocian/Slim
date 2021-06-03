@@ -474,5 +474,25 @@ namespace Slim.Tests
 
             dependentService1.Should().NotBe(dependentService2);
         }
+
+        [TestMethod]
+        public void ScopedManagerCallsOriginalFactoryOnlyOnce()
+        {
+            var di = new ServiceManager();
+            var called = 0;
+            di.RegisterSingleton<IIndependentService, IndependentService>(sp =>
+            {
+                called++;
+                return new IndependentService();
+            });
+            var scopedDi = di.CreateScope();
+
+            scopedDi.GetService<IIndependentService>();
+            called.Should().Be(1);
+            scopedDi.GetService<IIndependentService>();
+            called.Should().Be(1);
+            di.GetService<IIndependentService>();
+            called.Should().Be(1);
+        }
     }
 }
