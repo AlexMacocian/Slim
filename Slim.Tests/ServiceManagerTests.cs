@@ -429,9 +429,9 @@ namespace Slim.Tests
         {
             var di = new ServiceManager();
             di.RegisterSingleton<IIndependentService, IndependentService>();
+            var scopedDi = di.CreateScope();
 
             var service = di.GetService<IIndependentService>();
-            var scopedDi = di.CreateScope();
             var scopedService = scopedDi.GetService<IIndependentService>();
 
             service.Should().Be(scopedService);

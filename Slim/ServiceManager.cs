@@ -673,7 +673,7 @@ namespace Slim
             var dictionary = new Dictionary<Type, object>();
             foreach (var kvp in this.Instances)
             {
-                if (this.InterfaceMapping.First(s => s.Value.Item1 == kvp.Key).Value.Item2 is not Lifetime.Scoped)
+                if (this.InterfaceMapping.First(s => s.Value.Item1 == kvp.Key).Value.Item2 is Lifetime.Singleton)
                 {
                     dictionary.Add(kvp.Key, kvp.Value);
                 }
@@ -687,8 +687,22 @@ namespace Slim
             var factories = new Dictionary<Type, Delegate>(this.Factories);
             var exceptionHandlers = new Dictionary<Type, Delegate>(this.ExceptionHandlers);
             var resolvers = new List<IDependencyResolver>(this.Resolvers);
-            var singletons = this.GetSingletons();
-            return new ServiceManager(interfaceMapping, singletons, factories, exceptionHandlers, resolvers);
+            /*
+             * For singletons, create a factory in scoped service manager that should call this manager
+             * to retrieve the singleton.
+             * This means that if the singleton has not yet been created in this service manager,
+             * the scoped service manager will not create a new one but instead ask the original service manager to
+             * create the singleton instead.
+             */
+            foreach (var kvp in this.InterfaceMapping)
+            {
+                if (kvp.Value.Item2 is Lifetime.Singleton)
+                {
+                    factories[kvp.Key] = new Func<IServiceProvider, object>((_) => this.PrepareAndGetService(kvp.Key));
+                }
+            }
+
+            return new ServiceManager(interfaceMapping, new Dictionary<Type, object>(), factories, exceptionHandlers, resolvers);
         }
     }
 }
