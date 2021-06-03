@@ -18,6 +18,9 @@ namespace Slim
         private Dictionary<Type, Delegate> ExceptionHandlers { get; } = new Dictionary<Type, Delegate>();
         private List<IDependencyResolver> Resolvers { get; } = new List<IDependencyResolver>();
 
+        /// <summary>
+        /// Creates an instance of <see cref="IServiceManager"/>.
+        /// </summary>
         public ServiceManager()
         {
         }
