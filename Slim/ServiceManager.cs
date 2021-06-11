@@ -371,7 +371,22 @@ namespace Slim
         {
             return this.PrepareAndGetService(type);
         }
-
+        /// <summary>
+        /// Returns all services that can be cast to provided type.
+        /// </summary>
+        /// <typeparam name="T">Type of the returned services.</typeparam>
+        public IEnumerable<T> GetServicesOfType<T>()
+        {
+            return this.EnumerateAndReturnServicesOfType(typeof(T)).OfType<T>();
+        }
+        /// <summary>
+        /// Returns all services that can be cast to provided type.
+        /// </summary>
+        /// <param name="type">Type of the returned services.</param>
+        public IEnumerable<object> GetServicesOfType(Type type)
+        {
+            return this.EnumerateAndReturnServicesOfType(type);
+        }
         /// <summary>
         /// Marks a type of exception to be caught and handled.
         /// </summary>
@@ -422,6 +437,16 @@ namespace Slim
             this.Resolvers.Add(dependencyResolver);
         }
 
+        private IEnumerable<object> EnumerateAndReturnServicesOfType(Type type)
+        {
+            foreach(var interf in this.InterfaceMapping.Keys)
+            {
+                if (type.IsAssignableFrom(interf))
+                {
+                    yield return this.PrepareAndGetService(interf);
+                }
+            }
+        }
         private void RegisterService(Type tClass, Lifetime lifetime, Type tInterface = null, Delegate serviceFactory = null)
         {
             if (tInterface is not null)

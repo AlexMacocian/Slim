@@ -494,5 +494,18 @@ namespace Slim.Tests
             di.GetService<IIndependentService>();
             called.Should().Be(1);
         }
+
+        [TestMethod]
+        public void GetServicesReturnsAllServicesWithInterface()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            di.RegisterSingleton<ISharedService1, SharedService1>();
+            di.RegisterSingleton<ISharedService2, SharedService2>();
+            di.RegisterSingleton<ISharedService3, SharedService3>();
+
+            di.GetServicesOfType<ISharedInterface>().Should().HaveCount(3);
+            di.GetServicesOfType(typeof(ISharedInterface)).Should().HaveCount(3).And.AllBeAssignableTo<ISharedInterface>();
+        }
     }
 }
