@@ -39,6 +39,18 @@
             Interface for <see cref="T:Slim.ServiceManager"/>.
             </summary>
         </member>
+        <member name="M:Slim.IServiceManager.GetServicesOfType``1">
+            <summary>
+            Returns all services that can be cast to provided type.
+            </summary>
+            <typeparam name="T">Type of the returned services.</typeparam>
+        </member>
+        <member name="M:Slim.IServiceManager.GetServicesOfType(System.Type)">
+            <summary>
+            Returns all services that can be cast to provided type.
+            </summary>
+            <param name="type">Type of the returned services.</param>
+        </member>
         <member name="M:Slim.IServiceManager.RegisterServiceManager">
             <summary>
             Register the current service manager as a valid dependency.
@@ -310,14 +322,6 @@
             Resolves and returns the required service.
             </summary>
             <typeparam name="TInterface">Type of required service.</typeparam>
-            <returns>Required service.</returns>
-            <exception cref="T:Slim.Exceptions.DependencyInjectionException">Thrown when unable to resolve required service.</exception>
-        </member>
-        <member name="M:Slim.IServiceProvider.GetService(System.Type)">
-            <summary>
-            Resolves and returns the required service.
-            </summary>
-            <param name="type">Type of required service.</param>
             <returns>Required service.</returns>
             <exception cref="T:Slim.Exceptions.DependencyInjectionException">Thrown when unable to resolve required service.</exception>
         </member>
@@ -594,6 +598,18 @@
             <param name="type">Type of required service.</param>
             <returns>Required service.</returns>
             <exception cref="T:Slim.Exceptions.DependencyInjectionException">Thrown when unable to resolve required service.</exception>
+        </member>
+        <member name="M:Slim.ServiceManager.GetServicesOfType``1">
+            <summary>
+            Returns all services that can be cast to provided type.
+            </summary>
+            <typeparam name="T">Type of the returned services.</typeparam>
+        </member>
+        <member name="M:Slim.ServiceManager.GetServicesOfType(System.Type)">
+            <summary>
+            Returns all services that can be cast to provided type.
+            </summary>
+            <param name="type">Type of the returned services.</param>
         </member>
         <member name="M:Slim.ServiceManager.HandleException``1(System.Func{Slim.IServiceProvider,``0,System.Boolean})">
             <summary>

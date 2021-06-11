@@ -1,5 +1,6 @@
 ﻿using Slim.Resolvers;
 using System;
+using System.Collections.Generic;
 
 namespace Slim
 {
@@ -8,6 +9,16 @@ namespace Slim
     /// </summary>
     public interface IServiceManager : IServiceProvider, IServiceProducer
     {
+        /// <summary>
+        /// Returns all services that can be cast to provided type.
+        /// </summary>
+        /// <typeparam name="T">Type of the returned services.</typeparam>
+        public IEnumerable<T> GetServicesOfType<T>();
+        /// <summary>
+        /// Returns all services that can be cast to provided type.
+        /// </summary>
+        /// <param name="type">Type of the returned services.</param>
+        public IEnumerable<object> GetServicesOfType(Type type);
         /// <summary>
         /// Register the current service manager as a valid dependency.
         /// </summary>
