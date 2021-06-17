@@ -439,11 +439,12 @@ namespace Slim
 
         private IEnumerable<object> EnumerateAndReturnServicesOfType(Type type)
         {
-            foreach(var interf in this.InterfaceMapping.Keys)
+            foreach(var kvp in this.InterfaceMapping)
             {
-                if (type.IsAssignableFrom(interf))
+                var objectType = kvp.Value.Item1;
+                if (type.IsAssignableFrom(objectType))
                 {
-                    yield return this.PrepareAndGetService(interf);
+                    yield return this.PrepareAndGetService(kvp.Key);
                 }
             }
         }
