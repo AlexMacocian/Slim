@@ -63,7 +63,10 @@ namespace Slim
             where TInterface : class
             where TClass : TInterface
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(typeof(TClass), Lifetime.Transient, typeof(TInterface), serviceFactory);
         }
@@ -91,7 +94,10 @@ namespace Slim
             where TInterface : class
             where TClass : TInterface
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(typeof(TClass), Lifetime.Singleton, typeof(TInterface), serviceFactory);
         }
@@ -119,7 +125,10 @@ namespace Slim
             where TInterface : class
             where TClass : TInterface
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(typeof(TClass), Lifetime.Scoped, typeof(TInterface), serviceFactory);
         }
@@ -143,7 +152,10 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory)
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(tClass, Lifetime.Transient, tInterface, serviceFactory);
         }
@@ -167,7 +179,10 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory)
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(tClass, Lifetime.Singleton, tInterface, serviceFactory);
         }
@@ -191,7 +206,10 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterScoped(Type tInterface, Type tClass, Func<IServiceProvider, object> serviceFactory)
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(tClass, Lifetime.Scoped, tInterface, serviceFactory);
         }
@@ -215,7 +233,10 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterSingleton<TClass>(Func<IServiceProvider, TClass> serviceFactory) where TClass : class
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(typeof(TClass), Lifetime.Singleton, null, serviceFactory);
         }
@@ -239,7 +260,10 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterTransient<TClass>(Func<IServiceProvider, TClass> serviceFactory) where TClass : class
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(typeof(TClass), Lifetime.Transient, null, serviceFactory);
         }
@@ -263,7 +287,10 @@ namespace Slim
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
         public void RegisterScoped<TClass>(Func<IServiceProvider, TClass> serviceFactory) where TClass : class
         {
-            if (serviceFactory is null) throw new ArgumentNullException(nameof(serviceFactory));
+            if (serviceFactory is null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
 
             this.RegisterService(typeof(TClass), Lifetime.Scoped, null, serviceFactory);
         }
@@ -412,6 +439,7 @@ namespace Slim
             {
                 singleton.Dispose();
             }
+
             this.Factories.Clear();
             this.ExceptionHandlers.Clear();
         }
@@ -478,58 +506,24 @@ namespace Slim
         }
         private object PrepareAndGetService(Type tInterface)
         {
-            try
+            return this.TryFunc(() =>
             {
-                lock (this)
-                {
-                    return this.GetObject(tInterface);
-                }
-            }
-            catch(Exception e)
-            {
-                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
-                {
-                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
-                    if (shouldThrow)
-                    {
-                        throw;
-                    }
-                }
-                else
-                {
-                    throw;
-                }
-                return null;
-            }
+                return this.GetObject(tInterface);
+            });
         }
         private void RegisterFactory(Type tinterface, Delegate factory)
         {
-            try
+            this.TryAction(() =>
             {
                 lock (this)
                 {
                     this.Factories[tinterface] = factory;
                 }
-            }
-            catch(Exception e)
-            {
-                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
-                {
-                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
-                    if (shouldThrow)
-                    {
-                        throw;
-                    }
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            });
         }
         private void Map(Type tinterface, Type tclass, Lifetime lifetime)
         {
-            try
+            this.TryAction(() =>
             {
                 lock (this)
                 {
@@ -537,24 +531,10 @@ namespace Slim
                     {
                         throw new InvalidOperationException($"{nameof(ServiceManager)} already contains an entry for type {tinterface}");
                     }
+
                     this.InterfaceMapping[tinterface] = (tclass, lifetime);
                 }
-            }
-            catch(Exception e)
-            {
-                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
-                {
-                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
-                    if (shouldThrow)
-                    {
-                        throw;
-                    }
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            });
         }
         private object GetObject(Type tInterface)
         {
@@ -584,6 +564,7 @@ namespace Slim
                 {
                     this.Instances[type] = obj;
                 }
+
                 return obj;
             }
 
@@ -603,7 +584,7 @@ namespace Slim
                 }
             }
 
-            (var implementType, _) = InterfaceMapping[type];
+            (var implementType, _) = this.InterfaceMapping[type];
             if (this.Factories.TryGetValue(type, out var factory))
             {
                 return factory.DynamicInvoke(this);
@@ -619,25 +600,13 @@ namespace Slim
                  * If the parameters are missing, try with other constructors.
                  */
 
-                if (!constructor.IsPublic)
+                var parameters = this.GetParameters(constructor.GetParameters());
+                if (parameters is null)
                 {
                     continue;
                 }
 
-                try
-                {
-                    var parameters = this.GetParameters(constructor.GetParameters());
-                    if (parameters is null)
-                    {
-                        continue;
-                    }
-
-                    return constructor.Invoke(parameters);
-                }
-                catch(DependencyInjectionException exception)
-                {
-                    throw new DependencyInjectionException($"Could not instantiate service of type {implementType}!", exception);
-                }
+                return constructor.Invoke(parameters);
             }
 
             return null;
@@ -697,19 +666,6 @@ namespace Slim
 
             return parameterImplementationList.ToArray();
         }
-        private Dictionary<Type, object> GetSingletons()
-        {
-            var dictionary = new Dictionary<Type, object>();
-            foreach (var kvp in this.Instances)
-            {
-                if (this.InterfaceMapping.First(s => s.Value.Item1 == kvp.Key).Value.Item2 is Lifetime.Singleton)
-                {
-                    dictionary.Add(kvp.Key, kvp.Value);
-                }
-            }
-
-            return dictionary;
-        }
         private ServiceManager CreateScopeInner()
         {
             var interfaceMapping = new Dictionary<Type, (Type, Lifetime)>(this.InterfaceMapping);
@@ -732,6 +688,50 @@ namespace Slim
             }
 
             return new ServiceManager(interfaceMapping, new Dictionary<Type, object>(), factories, exceptionHandlers, resolvers);
+        }
+        private void TryAction(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                this.HandleException(ex);
+            }
+        }
+        private T TryFunc<T>(Func<T> action)
+        {
+            try
+            {
+                return action();
+            }
+            catch (Exception ex)
+            {
+                this.HandleException(ex);
+            }
+
+            return default;
+        }
+        private void HandleException(Exception exception)
+        {
+            if (exception is TargetInvocationException && exception.InnerException is not null)
+            {
+                exception = exception.InnerException;
+            }
+
+            if (this.ExceptionHandlers.TryGetValue(exception.GetType(), out var handler))
+            {
+                var shouldThrow = (bool)handler.DynamicInvoke(this, exception);
+                if (shouldThrow is false)
+                {
+                    throw exception;
+                }
+            }
+            else
+            {
+                throw exception;
+            }
         }
     }
 }
