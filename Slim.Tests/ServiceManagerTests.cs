@@ -11,6 +11,66 @@ namespace Slim.Tests
     public class ServiceManagerTests
     {
         [TestMethod]
+        public void RegisterAndRetrieveServiceUsesExistingImplementationSingleton()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IDependentService2, DependentService2>();
+            di.RegisterSingleton<IndependentService, IndependentService>();
+
+            var independentService = di.GetService<IndependentService>();
+            independentService.Should().NotBeNull();
+
+            var dependentService = di.GetService<IDependentService2>();
+            dependentService.Should().NotBeNull();
+
+            dependentService.IndependentService.Should().Be(independentService);
+        }
+
+        [TestMethod]
+        public void DependencyOnPrivateConstructorServiceThrows()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IPrivateConstructorService, PrivateConstructorService>();
+            di.RegisterSingleton<IDependentOnPrivateCtrService, DependentOnPrivateCtrService>();
+
+            var action = new Action(() =>
+            {
+                di.GetService<IDependentOnPrivateCtrService>();
+            });
+
+            action.Should().Throw<DependencyInjectionException>();
+        }
+
+        [TestMethod]
+        public void DependencyOnThrowingServiceThrows()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IThrowingService, ThrowingService>();
+            di.RegisterSingleton<IDependentOnThrowingService, DependentOnThrowingService>();
+
+            var action = new Action(() =>
+            {
+                di.GetService<IDependentOnThrowingService>();
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void ThrowingConstructorThrows()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IThrowingService, ThrowingService>();
+
+            var action = new Action(() =>
+            {
+                di.GetService<IThrowingService>();
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
         public void RetrieveThrowsNotRegistered()
         {
             var di = new ServiceManager();
@@ -215,7 +275,7 @@ namespace Slim.Tests
             di.HandleException<InvalidOperationException>((sp, e) =>
             {
                 thrown = true;
-                return false;
+                return true;
             });
 
             di.RegisterSingleton<IIndependentService, IndependentService>();
@@ -232,7 +292,7 @@ namespace Slim.Tests
             di.HandleException<InvalidOperationException>((sp, e) =>
             {
                 thrown = true;
-                return true;
+                return false;
             });
 
             di.RegisterSingleton<IIndependentService, IndependentService>();
@@ -329,6 +389,18 @@ namespace Slim.Tests
             service.Should().NotBeNull();
             service.Should().BeOfType<IndependentService>();
             resolver.Called.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void UseResolverWithoutRegisteringServiceCallsResolver()
+        {
+            var di = new ServiceManager();
+            var resolver = new IndependentServiceResolver();
+            di.RegisterResolver(resolver);
+
+            var service = di.GetService<IIndependentService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<IndependentService>();
         }
 
         [TestMethod]
