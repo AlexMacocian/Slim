@@ -320,58 +320,27 @@ namespace Slim
 
         private object PrepareAndGetService(Type tInterface)
         {
-            try
+            return this.TryFunc(() =>
             {
                 lock (this)
                 {
                     return this.GetObject(tInterface);
                 }
-            }
-            catch(Exception e)
-            {
-                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
-                {
-                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
-                    if (shouldThrow)
-                    {
-                        throw;
-                    }
-                }
-                else
-                {
-                    throw;
-                }
-                return null;
-            }
+            });
         }
         private void RegisterFactory(Type tinterface, Delegate factory)
         {
-            try
+            this.TryAction(() =>
             {
                 lock (this)
                 {
                     this.Factories[tinterface] = factory;
                 }
-            }
-            catch(Exception e)
-            {
-                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
-                {
-                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
-                    if (shouldThrow)
-                    {
-                        throw;
-                    }
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            });
         }
         private void Map(Type tinterface, Type tclass, Lifetime lifetime)
         {
-            try
+            this.TryAction(() =>
             {
                 lock (this)
                 {
@@ -381,22 +350,7 @@ namespace Slim
                     }
                     this.InterfaceMapping[tinterface] = (tclass, lifetime);
                 }
-            }
-            catch(Exception e)
-            {
-                if (this.ExceptionHandlers.TryGetValue(e.GetType(), out var handler))
-                {
-                    var shouldThrow = (bool)handler.DynamicInvoke(this, e);
-                    if (shouldThrow)
-                    {
-                        throw;
-                    }
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            });
         }
         private object GetObject(Type tInterface)
         {
@@ -451,11 +405,6 @@ namespace Slim
                  * the constructor with the paramters.
                  * If the parameters are missing, try with other constructors.
                  */
-
-                if (!constructor.IsPublic)
-                {
-                    continue;
-                }
 
                 try
                 {
@@ -513,6 +462,51 @@ namespace Slim
             }
 
             return parameterImplementationList.ToArray();
+        }
+        private void TryAction(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch(Exception ex)
+            {
+                this.HandleException(ex);
+            }
+        }
+        private T TryFunc<T>(Func<T> action)
+        {
+            try
+            {
+                return action();
+            }
+            catch (Exception ex)
+            {
+                this.HandleException(ex);
+            }
+
+            return default;
+        }
+
+        private void HandleException(Exception exception)
+        {
+            if (exception is TargetInvocationException && exception.InnerException is not null)
+            {
+                exception = exception.InnerException;
+            }
+
+            if (this.ExceptionHandlers.TryGetValue(exception.GetType(), out var handler))
+            {
+                var shouldThrow = (bool)handler.DynamicInvoke(this, exception);
+                if (shouldThrow is false)
+                {
+                    throw exception;
+                }
+            }
+            else
+            {
+                throw exception;
+            }
         }
     }
 }
