@@ -489,7 +489,6 @@ namespace Slim
         public void Dispose()
         {
             this.Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
 
         private IEnumerable<object> EnumerateAndReturnServicesOfType(Type type)
