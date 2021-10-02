@@ -209,7 +209,7 @@ namespace Slim.Tests
         public void MultiInterfaceDeclarationReturnsSameSingleton()
         {
             var di = new ServiceManager();
-            di.RegisterSingleton<MultiInterfaceService>();
+            di.RegisterSingleton<MultiInterfaceService>(registerAllInterfaces: true);
 
             var singleton1 = di.GetService<IMultiInterfaceService1>();
             var singleton2 = di.GetService<IMultiInterfaceService2>();
@@ -221,7 +221,7 @@ namespace Slim.Tests
         public void MultiInterfaceDeclarationReturnsDifferentTransient()
         {
             var di = new ServiceManager();
-            di.RegisterTransient<MultiInterfaceService>();
+            di.RegisterTransient<MultiInterfaceService>(registerAllInterfaces: true);
 
             var transient1 = di.GetService<IMultiInterfaceService1>();
             var transient2 = di.GetService<IMultiInterfaceService2>();
@@ -233,7 +233,7 @@ namespace Slim.Tests
         public void MultiInterfaceDeclarationWithFactoryReturnsSameSingleton()
         {
             var di = new ServiceManager();
-            di.RegisterSingleton(sp => new MultiInterfaceService());
+            di.RegisterSingleton(sp => new MultiInterfaceService(), registerAllInterfaces: true);
 
             var singleton1 = di.GetService<IMultiInterfaceService1>();
             var singleton2 = di.GetService<IMultiInterfaceService2>();
@@ -245,7 +245,7 @@ namespace Slim.Tests
         public void MultiInterfaceDeclarationWithFactoryReturnsDifferentTransient()
         {
             var di = new ServiceManager();
-            di.RegisterTransient(sp => new MultiInterfaceService());
+            di.RegisterTransient(sp => new MultiInterfaceService(), registerAllInterfaces: true);
 
             var transient1 = di.GetService<IMultiInterfaceService1>();
             var transient2 = di.GetService<IMultiInterfaceService2>();
@@ -578,6 +578,69 @@ namespace Slim.Tests
 
             di.GetServicesOfType<ISharedInterface>().Should().HaveCount(3);
             di.GetServicesOfType(typeof(ISharedInterface)).Should().HaveCount(3).And.AllBeAssignableTo<ISharedInterface>();
+        }
+
+        [TestMethod]
+        public void DisposingServiceManagerShouldDisposeInstances()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIDisposableService, IDisposableService>();
+
+            var disposableService = di.GetService<IIDisposableService>();
+            di.Dispose();
+
+            disposableService.DisposeCalled.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void DisposingServiceManagerShouldDisposeAllServices()
+        {
+            var di = new ServiceManager();
+            di.RegisterScoped<IDisposableService>();
+            di.RegisterSingleton<IDisposableSingletonService>();
+
+            var disposableService = di.GetService<IDisposableService>();
+            var disposableSingletonService = di.GetService<IDisposableSingletonService>();
+            di.Dispose();
+
+            disposableSingletonService.DisposeCalled.Should().BeTrue();
+            disposableService.DisposeCalled.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void DisposingScopedServiceManagerShouldDisposeOnlyScopedServices()
+        {
+            var di = new ServiceManager();
+            di.RegisterScoped<IDisposableService>();
+            di.RegisterSingleton<IDisposableSingletonService>();
+
+            var disposableSingletonService = di.GetService<IDisposableSingletonService>();
+            var scopedDi = di.CreateScope();
+            var disposableService = scopedDi.GetService<IDisposableService>();
+            scopedDi.Dispose();
+
+            disposableSingletonService.DisposeCalled.Should().BeFalse();
+            disposableService.DisposeCalled.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void RegisterAllInterfacesFalseShouldRegisterOnlyTypeOfObject()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<MultiInterfaceService>();
+
+            di.GetService<MultiInterfaceService>().Should().NotBeNull();
+            var action = new Action(() =>
+            {
+                di.GetService<IMultiInterfaceService1>();
+            });
+            var action2 = new Action(() =>
+            {
+                di.GetService<IMultiInterfaceService2>();
+            });
+
+            action.Should().Throw<Exception>();
+            action2.Should().Throw<Exception>();
         }
     }
 }

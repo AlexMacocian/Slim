@@ -55,7 +55,7 @@
             <summary>
             Register the current service manager as a valid dependency.
             </summary>
-            <remarks>Same functionality as calling <see cref="M:Slim.IServiceProducer.RegisterSingleton(System.Type,System.Func{Slim.IServiceProvider,System.Object})" /> with current <see cref="T:Slim.IServiceManager"/>.</remarks>
+            <remarks>Registers current service manager as <see cref="T:Slim.ServiceManager"/>, <see cref="T:Slim.IServiceManager"/>, <see cref="T:Slim.IServiceProducer"/>, <see cref="T:Slim.IServiceProvider"/>.</remarks>
         </member>
         <member name="M:Slim.IServiceManager.BuildSingletons">
             <summary>
@@ -90,55 +90,61 @@
             Interface allowing to produce services for the <see cref="T:Slim.ServiceManager"/>.
             </summary>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterSingleton``1">
+        <member name="M:Slim.IServiceProducer.RegisterSingleton``1(System.Boolean)">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterSingleton``1(System.Func{Slim.IServiceProvider,``0},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
             Registers the service for all interfaces it implements.
             </summary>
             <typeparam name="TClass">Type of implementation.</typeparam>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
+            <param name="serviceFactory">Factory for the implementation.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterSingleton``1(System.Func{Slim.IServiceProvider,``0})">
+        <member name="M:Slim.IServiceProducer.RegisterTransient``1(System.Boolean)">
             <summary>
-            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
+            <typeparam name="TClass">Type of implementation.</typeparam>
+            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterTransient``1(System.Func{Slim.IServiceProvider,``0},System.Boolean)">
+            <summary>
+            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
+            Registers the service for all interfaces it implements.
+            </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <param name="serviceFactory">Factory for the implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterTransient``1">
-            <summary>
-            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
-            Registers the service for all interfaces it implements.
-            </summary>
-            <typeparam name="TClass">Type of implementation.</typeparam>
-            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
-        </member>
-        <member name="M:Slim.IServiceProducer.RegisterTransient``1(System.Func{Slim.IServiceProvider,``0})">
-            <summary>
-            Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
-            Registers the service for all interfaces it implements.
-            </summary>
-            <typeparam name="TClass">Type of implementation.</typeparam>
-            <param name="serviceFactory">Factory for the implementation.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
-            <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
-        </member>
-        <member name="M:Slim.IServiceProducer.RegisterScoped``1">
+        <member name="M:Slim.IServiceProducer.RegisterScoped``1(System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterScoped``1(System.Func{Slim.IServiceProvider,``0})">
+        <member name="M:Slim.IServiceProducer.RegisterScoped``1(System.Func{Slim.IServiceProvider,``0},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <param name="serviceFactory">Factory for the implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
@@ -252,55 +258,61 @@
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterTransient(System.Type)">
+        <member name="M:Slim.IServiceProducer.RegisterTransient(System.Type,System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterTransient(System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+        <member name="M:Slim.IServiceProducer.RegisterTransient(System.Type,System.Func{Slim.IServiceProvider,System.Object},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <param name="serviceFactory">Factory for implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterSingleton(System.Type)">
+        <member name="M:Slim.IServiceProducer.RegisterSingleton(System.Type,System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterSingleton(System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+        <member name="M:Slim.IServiceProducer.RegisterSingleton(System.Type,System.Func{Slim.IServiceProvider,System.Object},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <param name="serviceFactory">Factory for implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterScoped(System.Type)">
+        <member name="M:Slim.IServiceProducer.RegisterScoped(System.Type,System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.IServiceProducer.RegisterScoped(System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+        <member name="M:Slim.IServiceProducer.RegisterScoped(System.Type,System.Func{Slim.IServiceProvider,System.Object},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <param name="serviceFactory">Factory for implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
@@ -463,109 +475,121 @@
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterSingleton``1">
+        <member name="M:Slim.ServiceManager.RegisterSingleton``1(System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterSingleton``1(System.Func{Slim.IServiceProvider,``0})">
+        <member name="M:Slim.ServiceManager.RegisterSingleton``1(System.Func{Slim.IServiceProvider,``0},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <param name="serviceFactory">Factory for the implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterTransient``1">
+        <member name="M:Slim.ServiceManager.RegisterTransient``1(System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterTransient``1(System.Func{Slim.IServiceProvider,``0})">
+        <member name="M:Slim.ServiceManager.RegisterTransient``1(System.Func{Slim.IServiceProvider,``0},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <param name="serviceFactory">Factory for the implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterScoped``1">
+        <member name="M:Slim.ServiceManager.RegisterScoped``1(System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterScoped``1(System.Func{Slim.IServiceProvider,``0})">
+        <member name="M:Slim.ServiceManager.RegisterScoped``1(System.Func{Slim.IServiceProvider,``0},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <typeparam name="TClass">Type of implementation.</typeparam>
             <param name="serviceFactory">Factory for the implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterTransient(System.Type)">
+        <member name="M:Slim.ServiceManager.RegisterTransient(System.Type,System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterTransient(System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+        <member name="M:Slim.ServiceManager.RegisterTransient(System.Type,System.Func{Slim.IServiceProvider,System.Object},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Transient"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <param name="serviceFactory">Factory for implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterSingleton(System.Type)">
+        <member name="M:Slim.ServiceManager.RegisterSingleton(System.Type,System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterSingleton(System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+        <member name="M:Slim.ServiceManager.RegisterSingleton(System.Type,System.Func{Slim.IServiceProvider,System.Object},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Singleton"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <param name="serviceFactory">Factory for implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterScoped(System.Type)">
+        <member name="M:Slim.ServiceManager.RegisterScoped(System.Type,System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <exception cref="T:System.InvalidOperationException">Thrown when <see cref="T:Slim.ServiceManager"/> contains an entry for the provided interface type.</exception>
         </member>
-        <member name="M:Slim.ServiceManager.RegisterScoped(System.Type,System.Func{Slim.IServiceProvider,System.Object})">
+        <member name="M:Slim.ServiceManager.RegisterScoped(System.Type,System.Func{Slim.IServiceProvider,System.Object},System.Boolean)">
             <summary>
             Register a service into <see cref="T:Slim.ServiceManager"/> with <see cref="F:Slim.Lifetime.Scoped"/>.
             Registers the service for all interfaces it implements.
             </summary>
+            <param name="registerAllInterfaces">If true, <see cref="T:Slim.ServiceManager"/> will register all interfaces implemented by the provided class./></param>
             <param name="tClass">Type of implementation.</param>
             <param name="serviceFactory">Factory for implementation.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
@@ -575,7 +599,7 @@
             <summary>
             Register the current service manager as a valid dependency.
             </summary>
-            <remarks>Same functionality as calling <see cref="M:Slim.IServiceProducer.RegisterSingleton(System.Type,System.Func{Slim.IServiceProvider,System.Object})" /> with current <see cref="T:Slim.IServiceManager"/>.</remarks>
+            <remarks>Registers current service manager as <see cref="T:Slim.ServiceManager"/>, <see cref="T:Slim.IServiceManager"/>, <see cref="T:Slim.IServiceProducer"/>, <see cref="T:Slim.IServiceProvider"/>.</remarks>
         </member>
         <member name="M:Slim.ServiceManager.CreateScope">
             <summary>
@@ -641,6 +665,11 @@
             This resolver will be called before auto-resolving a dependency. If resolver can handle the dependency, <see cref="T:Slim.IServiceManager"/> will return the resolved value.
             </remarks>
             <param name="dependencyResolver"><see cref="T:Slim.Resolvers.IDependencyResolver"/> that manually creates a dependency.</param>
+        </member>
+        <member name="M:Slim.ServiceManager.Dispose">
+            <summary>
+            Cleans up resources and disposes of all disposable singletons.
+            </summary>
         </member>
     </members>
 </doc>

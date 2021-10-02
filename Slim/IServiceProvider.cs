@@ -1,11 +1,12 @@
-﻿using Slim.Exceptions;
+﻿using System;
+using Slim.Exceptions;
 
 namespace Slim
 {
     /// <summary>
     /// Interface allowing to request services from the <see cref="ServiceManager"/>.
     /// </summary>
-    public interface IServiceProvider : System.IServiceProvider
+    public interface IServiceProvider : System.IServiceProvider, IDisposable
     {
         /// <summary>
         /// Creates a scoped <see cref="IServiceProvider"/>.

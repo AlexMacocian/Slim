@@ -11,55 +11,61 @@ namespace Slim
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterSingleton<TClass>()
+        void RegisterSingleton<TClass>(bool registerAllInterfaces = false)
             where TClass : class;
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="serviceFactory">Factory for the implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterSingleton<TClass>(Func<IServiceProvider, TClass> serviceFactory)
+        void RegisterSingleton<TClass>(Func<IServiceProvider, TClass> serviceFactory, bool registerAllInterfaces = false)
             where TClass : class;
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterTransient<TClass>()
+        void RegisterTransient<TClass>(bool registerAllInterfaces = false)
             where TClass : class;
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <param name="serviceFactory">Factory for the implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterTransient<TClass>(Func<IServiceProvider, TClass> serviceFactory)
+        void RegisterTransient<TClass>(Func<IServiceProvider, TClass> serviceFactory, bool registerAllInterfaces = false)
             where TClass : class;
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterScoped<TClass>()
+        void RegisterScoped<TClass>(bool registerAllInterfaces = false)
             where TClass : class;
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <param name="serviceFactory">Factory for the implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterScoped<TClass>(Func<IServiceProvider, TClass> serviceFactory)
+        void RegisterScoped<TClass>(Func<IServiceProvider, TClass> serviceFactory, bool registerAllInterfaces = false)
             where TClass : class;
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
@@ -173,49 +179,55 @@ namespace Slim
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterTransient(Type tClass);
+        void RegisterTransient(Type tClass, bool registerAllInterfaces = false);
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <param name="serviceFactory">Factory for implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterTransient(Type tClass, Func<IServiceProvider, object> serviceFactory);
+        void RegisterTransient(Type tClass, Func<IServiceProvider, object> serviceFactory, bool registerAllInterfaces = false);
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterSingleton(Type tClass);
+        void RegisterSingleton(Type tClass, bool registerAllInterfaces = false);
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <param name="serviceFactory">Factory for implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterSingleton(Type tClass, Func<IServiceProvider, object> serviceFactory);
+        void RegisterSingleton(Type tClass, Func<IServiceProvider, object> serviceFactory, bool registerAllInterfaces = false);
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterScoped(Type tClass);
+        void RegisterScoped(Type tClass, bool registerAllInterfaces = false);
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <param name="serviceFactory">Factory for implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        void RegisterScoped(Type tClass, Func<IServiceProvider, object> serviceFactory);
+        void RegisterScoped(Type tClass, Func<IServiceProvider, object> serviceFactory, bool registerAllInterfaces = false);
     }
 }

@@ -22,7 +22,7 @@ namespace Slim
         /// <summary>
         /// Register the current service manager as a valid dependency.
         /// </summary>
-        /// <remarks>Same functionality as calling <see cref="IServiceProducer.RegisterSingleton(Type, Func{IServiceProvider, object})" /> with current <see cref="IServiceManager"/>.</remarks>
+        /// <remarks>Registers current service manager as <see cref="ServiceManager"/>, <see cref="IServiceManager"/>, <see cref="IServiceProducer"/>, <see cref="IServiceProvider"/>.</remarks>
         void RegisterServiceManager();
         /// <summary>
         /// Builds all registered singletons.

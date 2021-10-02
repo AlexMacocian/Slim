@@ -12,6 +12,9 @@ namespace Slim
     /// </summary>
     public sealed class ServiceManager : IServiceManager
     {
+        private bool disposedValue;
+        private readonly bool scoped = false;
+
         private Dictionary<Type, (Type, Lifetime)> InterfaceMapping { get; } = new Dictionary<Type, (Type, Lifetime)>();
         private Dictionary<Type, object> Instances { get; } = new Dictionary<Type, object>();
         private Dictionary<Type, Delegate> Factories { get; } = new Dictionary<Type, Delegate>();
@@ -37,6 +40,7 @@ namespace Slim
             this.Factories = factories;
             this.ExceptionHandlers = exceptionHandlers;
             this.Resolvers = resolvers;
+            this.scoped = true;
         }
 
         /// <summary>
@@ -217,157 +221,172 @@ namespace Slim
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterSingleton<TClass>() where TClass : class
+        public void RegisterSingleton<TClass>(bool registerAllInterfaces = false) where TClass : class
         {
-            this.RegisterService(typeof(TClass), Lifetime.Singleton);
+            this.RegisterService(typeof(TClass), Lifetime.Singleton, registerAllInterfaces: registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <param name="serviceFactory">Factory for the implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterSingleton<TClass>(Func<IServiceProvider, TClass> serviceFactory) where TClass : class
+        public void RegisterSingleton<TClass>(Func<IServiceProvider, TClass> serviceFactory, bool registerAllInterfaces = false) where TClass : class
         {
             if (serviceFactory is null)
             {
                 throw new ArgumentNullException(nameof(serviceFactory));
             }
 
-            this.RegisterService(typeof(TClass), Lifetime.Singleton, null, serviceFactory);
+            this.RegisterService(typeof(TClass), Lifetime.Singleton, null, serviceFactory, registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterTransient<TClass>() where TClass : class
+        public void RegisterTransient<TClass>(bool registerAllInterfaces = false) where TClass : class
         {
-            this.RegisterService(typeof(TClass), Lifetime.Transient);
+            this.RegisterService(typeof(TClass), Lifetime.Transient, registerAllInterfaces: registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <param name="serviceFactory">Factory for the implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterTransient<TClass>(Func<IServiceProvider, TClass> serviceFactory) where TClass : class
+        public void RegisterTransient<TClass>(Func<IServiceProvider, TClass> serviceFactory, bool registerAllInterfaces = false) where TClass : class
         {
             if (serviceFactory is null)
             {
                 throw new ArgumentNullException(nameof(serviceFactory));
             }
 
-            this.RegisterService(typeof(TClass), Lifetime.Transient, null, serviceFactory);
+            this.RegisterService(typeof(TClass), Lifetime.Transient, null, serviceFactory, registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterScoped<TClass>() where TClass : class
+        public void RegisterScoped<TClass>(bool registerAllInterfaces = false) where TClass : class
         {
-            this.RegisterService(typeof(TClass), Lifetime.Scoped);
+            this.RegisterService(typeof(TClass), Lifetime.Scoped, registerAllInterfaces: registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <typeparam name="TClass">Type of implementation.</typeparam>
         /// <param name="serviceFactory">Factory for the implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterScoped<TClass>(Func<IServiceProvider, TClass> serviceFactory) where TClass : class
+        public void RegisterScoped<TClass>(Func<IServiceProvider, TClass> serviceFactory, bool registerAllInterfaces = false) where TClass : class
         {
             if (serviceFactory is null)
             {
                 throw new ArgumentNullException(nameof(serviceFactory));
             }
 
-            this.RegisterService(typeof(TClass), Lifetime.Scoped, null, serviceFactory);
+            this.RegisterService(typeof(TClass), Lifetime.Scoped, null, serviceFactory, registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterTransient(Type tClass)
+        public void RegisterTransient(Type tClass, bool registerAllInterfaces = false)
         {
-            this.RegisterService(tClass, Lifetime.Transient);
+            this.RegisterService(tClass, Lifetime.Transient, registerAllInterfaces: registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <param name="serviceFactory">Factory for implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterTransient(Type tClass, Func<IServiceProvider, object> serviceFactory)
+        public void RegisterTransient(Type tClass, Func<IServiceProvider, object> serviceFactory, bool registerAllInterfaces = false)
         {
-            this.RegisterService(tClass, Lifetime.Transient, null, serviceFactory);
+            this.RegisterService(tClass, Lifetime.Transient, null, serviceFactory, registerAllInterfaces: registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterSingleton(Type tClass)
+        public void RegisterSingleton(Type tClass, bool registerAllInterfaces = false)
         {
-            this.RegisterService(tClass, Lifetime.Singleton);
+            this.RegisterService(tClass, Lifetime.Singleton, registerAllInterfaces: registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <param name="serviceFactory">Factory for implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterSingleton(Type tClass, Func<IServiceProvider, object> serviceFactory)
+        public void RegisterSingleton(Type tClass, Func<IServiceProvider, object> serviceFactory, bool registerAllInterfaces = false)
         {
-            this.RegisterService(tClass, Lifetime.Singleton, null, serviceFactory);
+            this.RegisterService(tClass, Lifetime.Singleton, null, serviceFactory, registerAllInterfaces: registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterScoped(Type tClass)
+        public void RegisterScoped(Type tClass, bool registerAllInterfaces = false)
         {
-            this.RegisterService(tClass, Lifetime.Scoped);
+            this.RegisterService(tClass, Lifetime.Scoped, registerAllInterfaces: registerAllInterfaces);
         }
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
         /// Registers the service for all interfaces it implements.
         /// </summary>
+        /// <param name="registerAllInterfaces">If true, <see cref="ServiceManager"/> will register all interfaces implemented by the provided class./></param>
         /// <param name="tClass">Type of implementation.</param>
         /// <param name="serviceFactory">Factory for implementation.</param>
         /// <exception cref="ArgumentNullException">Thrown when the provided serviceFactory is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <see cref="ServiceManager"/> contains an entry for the provided interface type.</exception>
-        public void RegisterScoped(Type tClass, Func<IServiceProvider, object> serviceFactory)
+        public void RegisterScoped(Type tClass, Func<IServiceProvider, object> serviceFactory, bool registerAllInterfaces = false)
         {
-            this.RegisterService(tClass, Lifetime.Scoped, null, serviceFactory);
+            this.RegisterService(tClass, Lifetime.Scoped, null, serviceFactory, registerAllInterfaces: registerAllInterfaces);
         }
 
         /// <summary>
         /// Register the current service manager as a valid dependency.
         /// </summary>
-        /// <remarks>Same functionality as calling <see cref="IServiceProducer.RegisterSingleton(Type, Func{IServiceProvider, object})" /> with current <see cref="IServiceManager"/>.</remarks>
+        /// <remarks>Registers current service manager as <see cref="ServiceManager"/>, <see cref="IServiceManager"/>, <see cref="IServiceProducer"/>, <see cref="IServiceProvider"/>.</remarks>
         public void RegisterServiceManager()
         {
-            this.RegisterService(typeof(ServiceManager), Lifetime.Singleton, null, new Func<IServiceProvider, object>((sp) => { return this; }));
+            this.RegisterSingleton<IServiceManager, ServiceManager>(sp => this);
+            this.RegisterSingleton<ServiceManager, ServiceManager>(sp => this);
+            this.RegisterSingleton<IServiceProducer, ServiceManager>(sp => this);
+            this.RegisterSingleton<IServiceProvider, ServiceManager>(sp => this);
         }
 
         /// <summary>
@@ -464,6 +483,14 @@ namespace Slim
         {
             this.Resolvers.Add(dependencyResolver);
         }
+        /// <summary>
+        /// Cleans up resources and disposes of all disposable singletons.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         private IEnumerable<object> EnumerateAndReturnServicesOfType(Type type)
         {
@@ -476,7 +503,7 @@ namespace Slim
                 }
             }
         }
-        private void RegisterService(Type tClass, Lifetime lifetime, Type tInterface = null, Delegate serviceFactory = null)
+        private void RegisterService(Type tClass, Lifetime lifetime, Type tInterface = null, Delegate serviceFactory = null, bool registerAllInterfaces = false)
         {
             if (tInterface is not null)
             {
@@ -489,12 +516,15 @@ namespace Slim
                 return;
             }
 
-            foreach (var i in tClass.GetInterfaces())
+            if (registerAllInterfaces)
             {
-                this.Map(i, tClass, lifetime);
-                if (serviceFactory is not null)
+                foreach (var i in tClass.GetInterfaces())
                 {
-                    this.RegisterFactory(i, serviceFactory);
+                    this.Map(i, tClass, lifetime);
+                    if (serviceFactory is not null)
+                    {
+                        this.RegisterFactory(i, serviceFactory);
+                    }
                 }
             }
 
@@ -731,6 +761,39 @@ namespace Slim
             else
             {
                 throw exception;
+            }
+        }
+        private void Dispose(bool disposing)
+        {
+            if (!this.disposedValue)
+            {
+                if (disposing)
+                {
+                    /*
+                     * Dispose of all instances. If this instance of ServiceManager is scoped, ignore the Singleton instances as they are shared
+                     * across multiple service managers.
+                     */
+                    foreach (var interfacePair in this.InterfaceMapping
+                        .Where(kvp => kvp.Value.Item2 != Lifetime.Transient)
+                        .Where(kvp => this.scoped is false || kvp.Value.Item2 != Lifetime.Singleton))
+                    {
+                        if (this.Instances.TryGetValue(interfacePair.Key, out var instance) && instance is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+                        else if (this.Instances.TryGetValue(interfacePair.Value.Item1, out var instance2) && instance2 is IDisposable disposable2)
+                        {
+                            disposable2.Dispose();
+                        }
+                    }
+                }
+
+                this.InterfaceMapping.Clear();
+                this.Instances.Clear();
+                this.Resolvers.Clear();
+                this.ExceptionHandlers.Clear();
+                this.Factories.Clear();
+                this.disposedValue = true;
             }
         }
     }
