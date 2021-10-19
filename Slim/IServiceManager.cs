@@ -10,6 +10,18 @@ namespace Slim
     public interface IServiceManager : IServiceProvider, IServiceProducer
     {
         /// <summary>
+        /// Returns true if there exists a registration for <paramref name="tInterface"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of registered service.</param>
+        /// <returns>True if service <paramref name="tInterface"/> is registered. Otherwise returns false.</returns>
+        public bool IsRegistered(Type tInterface);
+        /// <summary>
+        /// Returns true if there exists a registration for <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of registered service.</typeparam>
+        /// <returns>True if service <typeparamref name="T"/> is registered. Otherwise returns false.</returns>
+        public bool IsRegistered<T>();
+        /// <summary>
         /// Returns all services that can be cast to provided type.
         /// </summary>
         /// <typeparam name="T">Type of the returned services.</typeparam>

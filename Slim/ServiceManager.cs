@@ -44,6 +44,24 @@ namespace Slim
         }
 
         /// <summary>
+        /// Returns true if there exists a registration for <paramref name="tInterface"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of registered service.</param>
+        /// <returns>True if service <paramref name="tInterface"/> is registered. Otherwise returns false.</returns>
+        public bool IsRegistered(Type tInterface)
+        {
+            return this.IsMapped(tInterface);
+        }
+        /// <summary>
+        /// Returns true if there exists a registration for <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of registered service.</typeparam>
+        /// <returns>True if service <typeparamref name="T"/> is registered. Otherwise returns false.</returns>
+        public bool IsRegistered<T>()
+        {
+            return this.IsMapped(typeof(T));
+        }
+        /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
         /// </summary>
         /// <typeparam name="TInterface">Type of interface.</typeparam>
@@ -562,6 +580,16 @@ namespace Slim
                     }
 
                     this.InterfaceMapping[tinterface] = (tclass, lifetime);
+                }
+            });
+        }
+        private bool IsMapped(Type tinterface)
+        {
+            return this.TryFunc(() =>
+            {
+                lock (this)
+                {
+                    return this.InterfaceMapping.ContainsKey(tinterface);
                 }
             });
         }

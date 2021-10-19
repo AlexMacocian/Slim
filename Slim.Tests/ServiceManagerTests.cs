@@ -642,5 +642,31 @@ namespace Slim.Tests
             action.Should().Throw<Exception>();
             action2.Should().Throw<Exception>();
         }
+
+        [TestMethod]
+        public void IsRegisteredReturnsTrueForRegisteredService()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            di.RegisterSingleton(typeof(IDependentService), typeof(DependentService));
+
+            var isRegistered1 = di.IsRegistered<IIndependentService>();
+            var isRegistered2 = di.IsRegistered(typeof(IDependentService));
+
+            isRegistered1.Should().BeTrue();
+            isRegistered2.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void IsRegisteredReturnsFalseForNonRegisteredService()
+        {
+            var di = new ServiceManager();
+
+            var isRegistered1 = di.IsRegistered<IIndependentService>();
+            var isRegistered2 = di.IsRegistered(typeof(IDependentService));
+
+            isRegistered1.Should().BeFalse();
+            isRegistered2.Should().BeFalse();
+        }
     }
 }
