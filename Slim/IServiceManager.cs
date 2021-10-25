@@ -10,27 +10,35 @@ namespace Slim
     public interface IServiceManager : IServiceProvider, IServiceProducer
     {
         /// <summary>
+        /// Allow modifications to scoped <see cref="IServiceManager"/> created from this <see cref="IServiceManager"/>.
+        /// </summary>
+        bool AllowScopedManagerModifications { get; set; }
+        /// <summary>
+        /// Returns true if <see cref="IServiceManager"/> is readonly.
+        /// </summary>
+        bool IsReadOnly { get; }
+        /// <summary>
         /// Returns true if there exists a registration for <paramref name="tInterface"/>.
         /// </summary>
         /// <param name="tInterface">Type of registered service.</param>
         /// <returns>True if service <paramref name="tInterface"/> is registered. Otherwise returns false.</returns>
-        public bool IsRegistered(Type tInterface);
+        bool IsRegistered(Type tInterface);
         /// <summary>
         /// Returns true if there exists a registration for <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">Type of registered service.</typeparam>
         /// <returns>True if service <typeparamref name="T"/> is registered. Otherwise returns false.</returns>
-        public bool IsRegistered<T>();
+        bool IsRegistered<T>();
         /// <summary>
         /// Returns all services that can be cast to provided type.
         /// </summary>
         /// <typeparam name="T">Type of the returned services.</typeparam>
-        public IEnumerable<T> GetServicesOfType<T>();
+        IEnumerable<T> GetServicesOfType<T>();
         /// <summary>
         /// Returns all services that can be cast to provided type.
         /// </summary>
         /// <param name="type">Type of the returned services.</param>
-        public IEnumerable<object> GetServicesOfType(Type type);
+        IEnumerable<object> GetServicesOfType(Type type);
         /// <summary>
         /// Register the current service manager as a valid dependency.
         /// </summary>

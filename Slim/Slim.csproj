@@ -8,10 +8,10 @@
     <Company />
     <Product></Product>
     <Description>Service lifetime management and dependency injection framework.</Description>
-    <AssemblyVersion>1.5.5</AssemblyVersion>
-    <FileVersion>1.5.5</FileVersion>
+    <AssemblyVersion>1.6</AssemblyVersion>
+    <FileVersion>1.6</FileVersion>
     <PackageProjectUrl>https://github.com/AlexMacocian/Slim</PackageProjectUrl>
-    <Version>1.5.5</Version>
+    <Version>1.6</Version>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>

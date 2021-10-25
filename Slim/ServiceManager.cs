@@ -22,6 +22,15 @@ namespace Slim
         private List<IDependencyResolver> Resolvers { get; } = new List<IDependencyResolver>();
 
         /// <summary>
+        /// Allow modifications to scoped <see cref="IServiceManager"/> created from this <see cref="IServiceManager"/>.
+        /// </summary>
+        public bool AllowScopedManagerModifications { get; set; }
+        /// <summary>
+        /// Returns true if <see cref="IServiceManager"/> is readonly.
+        /// </summary>
+        public bool IsReadOnly { get; }
+
+        /// <summary>
         /// Creates an instance of <see cref="IServiceManager"/>.
         /// </summary>
         public ServiceManager()
@@ -33,7 +42,8 @@ namespace Slim
             Dictionary<Type, object> singletons,
             Dictionary<Type, Delegate> factories,
             Dictionary<Type, Delegate> exceptionHandlers,
-            List<IDependencyResolver> resolvers)
+            List<IDependencyResolver> resolvers,
+            bool isReadOnly)
         {
             this.InterfaceMapping = interfaceMapping;
             this.Instances = singletons;
@@ -41,6 +51,7 @@ namespace Slim
             this.ExceptionHandlers = exceptionHandlers;
             this.Resolvers = resolvers;
             this.scoped = true;
+            this.IsReadOnly = isReadOnly;
         }
 
         /// <summary>
@@ -471,6 +482,11 @@ namespace Slim
         /// </remarks>
         public void Clear()
         {
+            if (this.IsReadOnly)
+            {
+                throw new InvalidOperationException($"Cannot clear {nameof(ServiceManager)}. {nameof(ServiceManager)} is readonly!");
+            }
+
             this.InterfaceMapping.Clear();
             foreach(var singleton in this.Instances.Values.Where(s => s is IDisposable).Select(s => (IDisposable)s))
             {
@@ -499,6 +515,11 @@ namespace Slim
         /// <param name="dependencyResolver"><see cref="IDependencyResolver"/> that manually creates a dependency.</param>
         public void RegisterResolver(IDependencyResolver dependencyResolver)
         {
+            if (this.IsReadOnly)
+            {
+                throw new InvalidOperationException($"Cannot register resolver. {nameof(ServiceManager)} is readonly!");
+            }
+
             this.Resolvers.Add(dependencyResolver);
         }
         /// <summary>
@@ -522,6 +543,11 @@ namespace Slim
         }
         private void RegisterService(Type tClass, Lifetime lifetime, Type tInterface = null, Delegate serviceFactory = null, bool registerAllInterfaces = false)
         {
+            if (this.IsReadOnly)
+            {
+                throw new InvalidOperationException($"Cannot register service. {nameof(ServiceManager)} is readonly!");
+            }
+
             if (tInterface is not null)
             {
                 this.Map(tInterface, tClass, lifetime);
@@ -615,7 +641,7 @@ namespace Slim
                 obj = this.TryImplementService(tInterface);
             }
 
-            if (obj is object)
+            if (obj is not null)
             {
                 if (lifetime == Lifetime.Singleton || lifetime == Lifetime.Scoped)
                 {
@@ -647,6 +673,10 @@ namespace Slim
                 return factory.DynamicInvoke(this);
             }
 
+            return this.FindAndCallConstructors(implementType);
+        }
+        private object FindAndCallConstructors(Type implementType)
+        {
             var constructors = implementType.GetConstructors();
             foreach (var constructor in constructors)
             {
@@ -740,11 +770,41 @@ namespace Slim
             {
                 if (kvp.Value.Item2 is Lifetime.Singleton)
                 {
-                    factories[kvp.Key] = new Func<IServiceProvider, object>((_) => this.PrepareAndGetService(kvp.Key));
+                    factories[kvp.Key] = new Func<IServiceProvider, object>((scopedManager) => this.ResolveSingletonWithScopedManager(scopedManager as ServiceManager, kvp.Key, kvp.Value.Item1));
                 }
             }
 
-            return new ServiceManager(interfaceMapping, new Dictionary<Type, object>(), factories, exceptionHandlers, resolvers);
+            return new ServiceManager(interfaceMapping, new Dictionary<Type, object>(), factories, exceptionHandlers, resolvers, this.AllowScopedManagerModifications is false);
+        }
+        private object ResolveSingletonWithScopedManager(ServiceManager scopedManager, Type registerType, Type implementedType)
+        {
+            try
+            {
+                return this.PrepareAndGetService(registerType);
+            }
+            catch (DependencyInjectionException)
+            {
+                if (scopedManager.IsReadOnly)
+                {
+                    throw;
+                }
+
+                /*
+                 * Most probably scoped manager has been modified and contains different definitions
+                 * than the parent manager.
+                 * As a last ditch effort, let the scoped provider try to implement the singleton.
+                 * If successful, update the parent provider as well.
+                 */
+                var obj = scopedManager.FindAndCallConstructors(implementedType); 
+                if (obj is not null)
+                {
+                    scopedManager.Instances[implementedType] = obj;
+                    this.Instances[implementedType] = obj;
+                    return obj;
+                }
+
+                throw;
+            }
         }
         private void TryAction(Action action)
         {

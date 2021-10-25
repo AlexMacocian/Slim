@@ -534,7 +534,7 @@ namespace Slim.Tests
         [TestMethod]
         public void ScopedManagerShouldHaveItsOwnLists()
         {
-            var di = new ServiceManager();
+            var di = new ServiceManager() { AllowScopedManagerModifications = true };
             di.RegisterSingleton<IIndependentService, IndependentService>();
             var scopedDi = di.CreateScope();
 
@@ -667,6 +667,54 @@ namespace Slim.Tests
 
             isRegistered1.Should().BeFalse();
             isRegistered2.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void ScopedServiceManagerWithDisallowedModificationsIsReadOnly()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IDependentService, DependentService>();
+            var scopedDi1 = di.CreateScope() as ServiceManager;
+
+            scopedDi1.IsReadOnly.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void ScopedServiceManagerWithAllowedModificationsIsNotReadOnly()
+        {
+            var di = new ServiceManager() { AllowScopedManagerModifications = true };
+            di.RegisterSingleton<IDependentService, DependentService>();
+            var scopedDi1 = di.CreateScope() as ServiceManager;
+
+            scopedDi1.IsReadOnly.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void ModifyingScopedManagerThrowsInvalidOperationException()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IDependentService, DependentService>();
+            var scopedDi1 = di.CreateScope() as ServiceManager;
+
+            var action = new Action(() => scopedDi1.RegisterSingleton<IIndependentService, IndependentService>());
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void ModifyingScopedManagerStillResolvesSingleton()
+        {
+            var di = new ServiceManager() { AllowScopedManagerModifications = true };
+            di.RegisterSingleton<IDependentService, DependentService>();
+            var scopedDi1 = di.CreateScope() as ServiceManager;
+            var scopedDi2 = di.CreateScope() as ServiceManager;
+            scopedDi1.RegisterSingleton<IIndependentService, IndependentService>();
+
+            var dependentService1 = scopedDi1.GetService<IDependentService>();
+            var dependentService2 = scopedDi2.GetService<IDependentService>();
+
+            dependentService1.Should().Be(dependentService2);
+            dependentService1.IndependentService.Should().Be(dependentService2.IndependentService);
         }
     }
 }
