@@ -19,10 +19,15 @@ To manage the lifetime of the objects, use ``` serviceManager.RegisterSingleton 
 
 Can register a services for all interaces it implements:
 ```c#
-serviceManager.RegisterSingleton<Service1>();
+serviceManager.RegisterSingleton<Service1>(registerAllInterfaces: true);
 serviceManager.GetService<I1Service1>();
 serviceManager.GetService<I2Service1>();
 ```
+Otherwise, calling
+```c#
+serviceManager.RegisterSingleton<Service1>();
+```
+Will only register Service1 as Service1.
 
 Supports both generics or arguments as types:
 ```c#
@@ -62,3 +67,23 @@ To create a scope, call the following method and use the new instance of scoped 
 ```c#
 serviceManager.CreateScope();
 ```
+
+By default, the returned scope manager will be readonly. This means, calling
+```c#
+scopedServiceManager.RegisterService<INewService, NewService>();
+```
+will throw an InvalidOperationException.
+
+To override the functionality from above, set the `AllowScopedManagerModifications` property to true in the original service manager before creating the scoped service manager
+```c#
+serviceManager.AllowScopedManagerModifications = true;
+var scopedServiceManager = serviceManager.CreateScope();
+scopedServiceManager.RegisterService<INewService, NewService>();
+```
+This way, no exception is thrown.
+
+To retrieve all services of a certain type from the service manager, use
+```c#
+serviceManager.GetServicesOfType<ISharedInterface>();
+```
+This will return an `IEnumerable<ISharedInterface>` with all the services which implement the `ISharedInterface`.
