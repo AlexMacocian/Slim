@@ -39,6 +39,16 @@
             Interface for <see cref="T:Slim.ServiceManager"/>.
             </summary>
         </member>
+        <member name="P:Slim.IServiceManager.AllowScopedManagerModifications">
+            <summary>
+            Allow modifications to scoped <see cref="T:Slim.IServiceManager"/> created from this <see cref="T:Slim.IServiceManager"/>.
+            </summary>
+        </member>
+        <member name="P:Slim.IServiceManager.IsReadOnly">
+            <summary>
+            Returns true if <see cref="T:Slim.IServiceManager"/> is readonly.
+            </summary>
+        </member>
         <member name="M:Slim.IServiceManager.IsRegistered(System.Type)">
             <summary>
             Returns true if there exists a registration for <paramref name="tInterface"/>.
@@ -374,6 +384,16 @@
         <member name="T:Slim.ServiceManager">
             <summary>
             <see cref="T:Slim.ServiceManager"/> responsible with storing and resolving services.
+            </summary>
+        </member>
+        <member name="P:Slim.ServiceManager.AllowScopedManagerModifications">
+            <summary>
+            Allow modifications to scoped <see cref="T:Slim.IServiceManager"/> created from this <see cref="T:Slim.IServiceManager"/>.
+            </summary>
+        </member>
+        <member name="P:Slim.ServiceManager.IsReadOnly">
+            <summary>
+            Returns true if <see cref="T:Slim.IServiceManager"/> is readonly.
             </summary>
         </member>
         <member name="M:Slim.ServiceManager.#ctor">
