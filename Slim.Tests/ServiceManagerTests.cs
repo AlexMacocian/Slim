@@ -670,6 +670,17 @@ namespace Slim.Tests
         }
 
         [TestMethod]
+        public void IsRegisteredReturnsTrueForDependencyResolver()
+        {
+            var di = new ServiceManager();
+            di.RegisterResolver(new DependentServiceResolver());
+
+            var isRegistered = di.IsRegistered<IDependentService>();
+
+            isRegistered.Should().BeTrue();
+        }
+
+        [TestMethod]
         public void ScopedServiceManagerWithDisallowedModificationsIsReadOnly()
         {
             var di = new ServiceManager();

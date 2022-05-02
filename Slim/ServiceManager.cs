@@ -615,6 +615,11 @@ namespace Slim
             {
                 lock (this)
                 {
+                    if (this.Resolvers.Any(resolver => resolver.CanResolve(tinterface)))
+                    {
+                        return true;
+                    }
+
                     return this.InterfaceMapping.ContainsKey(tinterface);
                 }
             });
