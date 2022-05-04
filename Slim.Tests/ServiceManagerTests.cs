@@ -727,5 +727,28 @@ namespace Slim.Tests
             dependentService1.Should().Be(dependentService2);
             dependentService1.IndependentService.Should().Be(dependentService2.IndependentService);
         }
+
+        [TestMethod]
+        public void ServiceWithPrefferedConstructorCallsPrefferedConstructor()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            di.RegisterSingleton<ServiceWithPrefferedConstructor>();
+
+            var service = di.GetService<ServiceWithPrefferedConstructor>();
+
+            service.CalledPrefferedConstructor.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void ServiceWithPrefferedConstructorFallsBackToOtherConstructors()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<ServiceWithPrefferedConstructor>();
+
+            var service = di.GetService<ServiceWithPrefferedConstructor>();
+
+            service.CalledPrefferedConstructor.Should().BeFalse();
+        }
     }
 }

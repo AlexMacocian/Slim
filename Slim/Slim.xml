@@ -4,6 +4,16 @@
         <name>Slim</name>
     </assembly>
     <members>
+        <member name="T:Slim.Attributes.PrefferedConstructorAttribute">
+            <summary>
+            Attribute used to mark constructors to be used with priority by the <see cref="T:Slim.ServiceManager"/>.
+            </summary>
+        </member>
+        <member name="M:Slim.Attributes.PrefferedConstructorAttribute.#ctor">
+            <summary>
+            Creates a new instance of <see cref="T:Slim.Attributes.PrefferedConstructorAttribute"/>.
+            </summary>
+        </member>
         <member name="T:Slim.Exceptions.DependencyInjectionException">
             <summary>
             Exception thrown when <see cref="T:Slim.IServiceManager"/> fails to create a service.
