@@ -1,4 +1,5 @@
-﻿using Slim.Exceptions;
+﻿using Slim.Attributes;
+using Slim.Exceptions;
 using Slim.Resolvers;
 using System;
 using System.Collections.Generic;
@@ -682,7 +683,11 @@ namespace Slim
         }
         private object FindAndCallConstructors(Type implementType)
         {
-            var constructors = implementType.GetConstructors();
+            /*
+             * Order constructors to give priority to constructors that have PrefferedConstructorAttribute decorator
+             */
+            var constructors = implementType.GetConstructors()
+                .OrderBy(c => c.GetCustomAttribute<PrefferedConstructorAttribute>() is null);
             foreach (var constructor in constructors)
             {
                 /*

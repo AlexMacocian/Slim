@@ -87,3 +87,5 @@ To retrieve all services of a certain type from the service manager, use
 serviceManager.GetServicesOfType<ISharedInterface>();
 ```
 This will return an `IEnumerable<ISharedInterface>` with all the services which implement the `ISharedInterface`.
+
+In order to give priority to certain constructors in a class, mark the constructors with `[PreferredConstructor]` attribute. `ServiceManager` will prioritize those constructors.
