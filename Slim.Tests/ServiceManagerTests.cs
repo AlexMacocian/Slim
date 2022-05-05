@@ -750,5 +750,34 @@ namespace Slim.Tests
 
             service.CalledPrefferedConstructor.Should().BeFalse();
         }
+
+        [TestMethod]
+        public void ServiceWithPrefferedConstructorCallsPrefferedConstructorWithHighestPriority()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            di.RegisterSingleton<IndependentService>();
+            di.RegisterSingleton<IDependentService2, DependentService2>();
+            di.RegisterSingleton<IDependentService, DependentService>();
+            di.RegisterSingleton<ServiceWithPrefferedConstructor>();
+
+            var service = di.GetService<ServiceWithPrefferedConstructor>();
+
+            service.CalledPrefferedConstructor0.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void ServiceWithPrefferedConstructorCallsPrefferedConstructorWithSecondHighestPriority()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<IIndependentService, IndependentService>();
+            di.RegisterSingleton<IndependentService>();
+            di.RegisterSingleton<IDependentService2, DependentService2>();
+            di.RegisterSingleton<ServiceWithPrefferedConstructor>();
+
+            var service = di.GetService<ServiceWithPrefferedConstructor>();
+
+            service.CalledPrefferedConstructor1.Should().BeTrue();
+        }
     }
 }
