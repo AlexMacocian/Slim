@@ -687,6 +687,7 @@ namespace Slim
              * Order constructors to give priority to constructors that have PrefferedConstructorAttribute decorator
              */
             var constructors = implementType.GetConstructors()
+                .Where(c => c.GetCustomAttribute<DoNotInjectAttribute>() is null)
                 .OrderBy(c => 
                 c.GetCustomAttribute<PreferredConstructorAttribute>() is PreferredConstructorAttribute preferredConstructorAttribute ?
                 preferredConstructorAttribute.Priority :

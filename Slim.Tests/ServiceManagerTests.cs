@@ -779,5 +779,19 @@ namespace Slim.Tests
 
             service.CalledPrefferedConstructor1.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void ServiceWithDoNotInjectAttribute_FailsToInject()
+        {
+            var di = new ServiceManager();
+            di.RegisterSingleton<DoNotInjectConstructorService>();
+
+            var action = () =>
+            {
+                var service = di.GetService<ServiceWithPrefferedConstructor>();
+            };
+
+            action.Should().Throw<DependencyInjectionException>();
+        }
     }
 }

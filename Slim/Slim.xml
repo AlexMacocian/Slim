@@ -4,6 +4,11 @@
         <name>Slim</name>
     </assembly>
     <members>
+        <member name="T:Slim.Attributes.DoNotInjectAttribute">
+            <summary>
+            Attribute used to mark constructors to not be used by the <see cref="T:Slim.ServiceManager"/>.
+            </summary>
+        </member>
         <member name="T:Slim.Attributes.PreferredConstructorAttribute">
             <summary>
             Attribute used to mark constructors to be used with priority by the <see cref="T:Slim.ServiceManager"/>.
