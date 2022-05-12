@@ -44,5 +44,8 @@ jobs:
     - name: Build Slim project
       run: dotnet build Slim -c $env:Configuration
 
+    - name: Package
+      run: dotnet pack -c Release -o . $env:Source_Project_Path
+
     - name: Publish
       run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
