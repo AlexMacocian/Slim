@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slim", "Slim\Slim.csproj", "{04F435A2-BEF9-4F49-9D1A-EC1AEFCC3088}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slim", "Slim\Slim.csproj", "{04F435A2-BEF9-4F49-9D1A-EC1AEFCC3088}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slim.Tests", "Slim.Tests\Slim.Tests.csproj", "{F03F7353-0BD5-4691-A318-BC6FC93AB00E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slim.Tests", "Slim.Tests\Slim.Tests.csproj", "{F03F7353-0BD5-4691-A318-BC6FC93AB00E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{04F435A2-BEF9-4F49-9D1A-EC1AEFCC3088} = {04F435A2-BEF9-4F49-9D1A-EC1AEFCC3088}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{04D9F456-6AE5-4880-B4BB-89FF3B084585}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\cd.yaml = .github\workflows\cd.yaml
+		.github\workflows\ci.yaml = .github\workflows\ci.yaml
 	EndProjectSection
 EndProject
 Global
