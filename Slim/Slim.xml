@@ -69,38 +69,6 @@
             Returns true if <see cref="T:Slim.IServiceManager"/> is readonly.
             </summary>
         </member>
-        <member name="M:Slim.IServiceManager.IsRegistered(System.Type)">
-            <summary>
-            Returns true if there exists a registration for <paramref name="tInterface"/>.
-            </summary>
-            <param name="tInterface">Type of registered service.</param>
-            <returns>True if service <paramref name="tInterface"/> is registered. Otherwise returns false.</returns>
-        </member>
-        <member name="M:Slim.IServiceManager.IsRegistered``1">
-            <summary>
-            Returns true if there exists a registration for <typeparamref name="T"/>.
-            </summary>
-            <typeparam name="T">Type of registered service.</typeparam>
-            <returns>True if service <typeparamref name="T"/> is registered. Otherwise returns false.</returns>
-        </member>
-        <member name="M:Slim.IServiceManager.GetServicesOfType``1">
-            <summary>
-            Returns all services that can be cast to provided type.
-            </summary>
-            <typeparam name="T">Type of the returned services.</typeparam>
-        </member>
-        <member name="M:Slim.IServiceManager.GetServicesOfType(System.Type)">
-            <summary>
-            Returns all services that can be cast to provided type.
-            </summary>
-            <param name="type">Type of the returned services.</param>
-        </member>
-        <member name="M:Slim.IServiceManager.RegisterServiceManager">
-            <summary>
-            Register the current service manager as a valid dependency.
-            </summary>
-            <remarks>Registers current service manager as <see cref="T:Slim.ServiceManager"/>, <see cref="T:Slim.IServiceManager"/>, <see cref="T:Slim.IServiceProducer"/>, <see cref="T:Slim.IServiceProvider"/>.</remarks>
-        </member>
         <member name="M:Slim.IServiceManager.BuildSingletons">
             <summary>
             Builds all registered singletons.
@@ -127,6 +95,26 @@
             <summary>
             Interface allowing to produce services for the <see cref="T:Slim.ServiceManager"/>.
             </summary>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterServiceManager">
+            <summary>
+            Register the current service manager as a valid dependency.
+            </summary>
+            <remarks>Registers current service manager as <see cref="T:Slim.ServiceManager"/>, <see cref="T:Slim.IServiceManager"/>, <see cref="T:Slim.IServiceProducer"/>, <see cref="T:Slim.IServiceProvider"/>.</remarks>
+        </member>
+        <member name="M:Slim.IServiceProducer.IsRegistered(System.Type)">
+            <summary>
+            Returns true if there exists a registration for <paramref name="tInterface"/>.
+            </summary>
+            <param name="tInterface">Type of registered service.</param>
+            <returns>True if service <paramref name="tInterface"/> is registered. Otherwise returns false.</returns>
+        </member>
+        <member name="M:Slim.IServiceProducer.IsRegistered``1">
+            <summary>
+            Returns true if there exists a registration for <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">Type of registered service.</typeparam>
+            <returns>True if service <typeparamref name="T"/> is registered. Otherwise returns false.</returns>
         </member>
         <member name="M:Slim.IServiceProducer.RegisterResolver(Slim.Resolvers.IDependencyResolver)">
             <summary>
@@ -366,6 +354,18 @@
             <summary>
             Interface allowing to request services from the <see cref="T:Slim.ServiceManager"/>.
             </summary>
+        </member>
+        <member name="M:Slim.IServiceProvider.GetServicesOfType``1">
+            <summary>
+            Returns all services that can be cast to provided type.
+            </summary>
+            <typeparam name="T">Type of the returned services.</typeparam>
+        </member>
+        <member name="M:Slim.IServiceProvider.GetServicesOfType(System.Type)">
+            <summary>
+            Returns all services that can be cast to provided type.
+            </summary>
+            <param name="type">Type of the returned services.</param>
         </member>
         <member name="M:Slim.IServiceProvider.CreateScope">
             <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Slim.Exceptions;
 
 namespace Slim
@@ -8,6 +9,16 @@ namespace Slim
     /// </summary>
     public interface IServiceProvider : System.IServiceProvider, IDisposable
     {
+        /// <summary>
+        /// Returns all services that can be cast to provided type.
+        /// </summary>
+        /// <typeparam name="T">Type of the returned services.</typeparam>
+        IEnumerable<T> GetServicesOfType<T>();
+        /// <summary>
+        /// Returns all services that can be cast to provided type.
+        /// </summary>
+        /// <param name="type">Type of the returned services.</param>
+        IEnumerable<object> GetServicesOfType(Type type);
         /// <summary>
         /// Creates a scoped <see cref="IServiceProvider"/>.
         /// </summary>

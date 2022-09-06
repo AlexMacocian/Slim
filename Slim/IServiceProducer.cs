@@ -9,6 +9,23 @@ namespace Slim
     public interface IServiceProducer
     {
         /// <summary>
+        /// Register the current service manager as a valid dependency.
+        /// </summary>
+        /// <remarks>Registers current service manager as <see cref="ServiceManager"/>, <see cref="IServiceManager"/>, <see cref="IServiceProducer"/>, <see cref="IServiceProvider"/>.</remarks>
+        void RegisterServiceManager();
+        /// <summary>
+        /// Returns true if there exists a registration for <paramref name="tInterface"/>.
+        /// </summary>
+        /// <param name="tInterface">Type of registered service.</param>
+        /// <returns>True if service <paramref name="tInterface"/> is registered. Otherwise returns false.</returns>
+        bool IsRegistered(Type tInterface);
+        /// <summary>
+        /// Returns true if there exists a registration for <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of registered service.</typeparam>
+        /// <returns>True if service <typeparamref name="T"/> is registered. Otherwise returns false.</returns>
+        bool IsRegistered<T>();
+        /// <summary>
         /// Register a resolver that manually resolves dependencies.
         /// </summary>
         /// <param name="dependencyResolver">Resolver that manually creates a dependency.</param>
