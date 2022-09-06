@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Slim.Resolvers;
+using System;
 
 namespace Slim
 {
@@ -7,6 +8,11 @@ namespace Slim
     /// </summary>
     public interface IServiceProducer
     {
+        /// <summary>
+        /// Register a resolver that manually resolves dependencies.
+        /// </summary>
+        /// <param name="dependencyResolver">Resolver that manually creates a dependency.</param>
+        void RegisterResolver(IDependencyResolver dependencyResolver);
         /// <summary>
         /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
         /// Registers the service for all interfaces it implements.
