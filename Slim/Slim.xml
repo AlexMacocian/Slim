@@ -123,16 +123,16 @@
             Calls <see cref="M:System.IDisposable.Dispose"/> on all <see cref="T:System.IDisposable"/> singletons.
             </remarks>
         </member>
-        <member name="M:Slim.IServiceManager.RegisterResolver(Slim.Resolvers.IDependencyResolver)">
-            <summary>
-            Register a resolver that manually resolves dependencies.
-            </summary>
-            <param name="dependencyResolver">Resolver that manually creates a dependency.</param>
-        </member>
         <member name="T:Slim.IServiceProducer">
             <summary>
             Interface allowing to produce services for the <see cref="T:Slim.ServiceManager"/>.
             </summary>
+        </member>
+        <member name="M:Slim.IServiceProducer.RegisterResolver(Slim.Resolvers.IDependencyResolver)">
+            <summary>
+            Register a resolver that manually resolves dependencies.
+            </summary>
+            <param name="dependencyResolver">Resolver that manually creates a dependency.</param>
         </member>
         <member name="M:Slim.IServiceProducer.RegisterSingleton``1(System.Boolean)">
             <summary>
