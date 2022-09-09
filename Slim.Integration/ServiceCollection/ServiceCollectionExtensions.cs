@@ -31,6 +31,7 @@ public static class ServiceCollectionExtensions
 
     private static void RegisterServiceProviderDependencies(IServiceManager serviceManager)
     {
+        serviceManager.RegisterResolver(new IEnumerableResolver());
         serviceManager.RegisterScoped<IServiceScopeFactory, SlimServiceScopeFactory>();
         serviceManager.RegisterScoped<IServiceProviderIsService, SlimServiceProviderIsService>();
     }

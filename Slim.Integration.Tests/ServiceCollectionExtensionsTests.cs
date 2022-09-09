@@ -167,4 +167,28 @@ public sealed class ServiceCollectionExtensionsTests
         isServiceApi.IsService(typeof(TestService)).Should().BeFalse();
         isServiceApi.IsService(typeof(object)).Should().BeFalse();
     }
+
+    [TestMethod]
+    public void BuildSlimServiceProvider_GetServices_ReturnsExpectedServices()
+    {
+        var serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        ServiceCollectionServiceExtensions.AddTransient<TestService>(serviceCollection);
+        ServiceCollectionServiceExtensions.AddTransient<TestService2>(serviceCollection);
+        var serviceProvider = serviceCollection.BuildSlimServiceProvider();
+
+        var services = serviceProvider.GetServices<ITestService>();
+
+        services.Should().HaveCount(2);
+    }
+
+    [TestMethod]
+    public void BuildSlimServiceProvider_GetServicesNoServices_ReturnsNoServices()
+    {
+        var serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        var serviceProvider = serviceCollection.BuildSlimServiceProvider();
+
+        var services = serviceProvider.GetServices<ITestService>();
+
+        services.Should().HaveCount(0);
+    }
 }
