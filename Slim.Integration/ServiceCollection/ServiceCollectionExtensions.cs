@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Slim.Integration.ServiceCollection;
 public static class ServiceCollectionExtensions
 {
-    public static System.IServiceProvider BuildSlimServiceProvider(this Microsoft.Extensions.DependencyInjection.ServiceCollection serviceCollection)
+    public static System.IServiceProvider BuildSlimServiceProvider(this IServiceCollection serviceCollection)
     {
         var serviceManager = new ServiceManager();
         foreach(var serviceDescriptor in serviceCollection)

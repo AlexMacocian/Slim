@@ -8,10 +8,10 @@
     <Company />
     <Product></Product>
     <Description>Integration with Microsoft.DependencyInjection library.</Description>
-    <AssemblyVersion>1.0.2</AssemblyVersion>
-    <FileVersion>1.0.2</FileVersion>
+    <AssemblyVersion>1.0.3</AssemblyVersion>
+    <FileVersion>1.0.3</FileVersion>
     <PackageProjectUrl>https://github.com/AlexMacocian/Slim</PackageProjectUrl>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
