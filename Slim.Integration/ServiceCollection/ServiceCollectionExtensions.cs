@@ -4,10 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Slim.Integration.ServiceCollection;
 public static class ServiceCollectionExtensions
 {
-    public static System.IServiceProvider BuildSlimServiceProvider(this Microsoft.Extensions.DependencyInjection.ServiceCollection serviceCollection)
+    public static System.IServiceProvider BuildSlimServiceProvider(this IServiceCollection serviceCollection, IServiceManager serviceManager)
     {
-        var serviceManager = new ServiceManager();
-        foreach(var serviceDescriptor in serviceCollection)
+        _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+        _ = serviceManager ?? throw new ArgumentNullException(nameof(serviceManager));
+
+        foreach (var serviceDescriptor in serviceCollection)
         {
             switch (serviceDescriptor.Lifetime)
             {
@@ -29,6 +31,14 @@ public static class ServiceCollectionExtensions
         return serviceManager;
     }
 
+    public static System.IServiceProvider BuildSlimServiceProvider(this IServiceCollection serviceCollection)
+    {
+        _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+
+        var serviceManager = new ServiceManager();
+        return serviceCollection.BuildSlimServiceProvider(serviceManager);
+    }
+
     private static void RegisterServiceProviderDependencies(IServiceManager serviceManager)
     {
         serviceManager.RegisterResolver(new IEnumerableResolver());
@@ -36,7 +46,7 @@ public static class ServiceCollectionExtensions
         serviceManager.RegisterScoped<IServiceProviderIsService, SlimServiceProviderIsService>();
     }
 
-    private static void RegisterSingleton(ServiceManager serviceManager, ServiceDescriptor serviceDescriptor)
+    private static void RegisterSingleton(IServiceManager serviceManager, ServiceDescriptor serviceDescriptor)
     {
         if (serviceDescriptor.ImplementationInstance is null &&
             serviceDescriptor.ImplementationFactory is not null)
@@ -54,7 +64,7 @@ public static class ServiceCollectionExtensions
         }
     }
 
-    private static void RegisterScoped(ServiceManager serviceManager, ServiceDescriptor serviceDescriptor)
+    private static void RegisterScoped(IServiceManager serviceManager, ServiceDescriptor serviceDescriptor)
     {
         if (serviceDescriptor.ImplementationInstance is null &&
             serviceDescriptor.ImplementationFactory is not null)
@@ -72,7 +82,7 @@ public static class ServiceCollectionExtensions
         }
     }
 
-    private static void RegisterTransient(ServiceManager serviceManager, ServiceDescriptor serviceDescriptor)
+    private static void RegisterTransient(IServiceManager serviceManager, ServiceDescriptor serviceDescriptor)
     {
         if (serviceDescriptor.ImplementationInstance is null &&
             serviceDescriptor.ImplementationFactory is not null)
