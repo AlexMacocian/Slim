@@ -25,8 +25,14 @@ public static class ServiceCollectionExtensions
             }
         }
 
-        serviceManager.RegisterScoped<IServiceScopeFactory, ServiceScopeFactory>();
+        RegisterServiceProviderDependencies(serviceManager);
         return serviceManager;
+    }
+
+    private static void RegisterServiceProviderDependencies(IServiceManager serviceManager)
+    {
+        serviceManager.RegisterScoped<IServiceScopeFactory, SlimServiceScopeFactory>();
+        serviceManager.RegisterScoped<IServiceProviderIsService, SlimServiceProviderIsService>();
     }
 
     private static void RegisterSingleton(ServiceManager serviceManager, ServiceDescriptor serviceDescriptor)

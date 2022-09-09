@@ -2,11 +2,11 @@
 
 namespace Slim.Integration.ServiceCollection;
 
-public sealed class ServiceScopeFactory : IServiceScopeFactory
+internal sealed class SlimServiceScopeFactory : IServiceScopeFactory
 {
     private readonly IServiceManager serviceManager;
 
-    public ServiceScopeFactory(
+    public SlimServiceScopeFactory(
         IServiceManager serviceManager)
     {
         this.serviceManager = serviceManager;
@@ -15,6 +15,6 @@ public sealed class ServiceScopeFactory : IServiceScopeFactory
     public IServiceScope CreateScope()
     {
         IServiceProvider scopedServiceManager = this.serviceManager.CreateScope();
-        return new ServiceScope { ServiceProvider = scopedServiceManager };
+        return new SlimServiceScope { ServiceProvider = scopedServiceManager };
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Slim.Integration.ServiceCollection;
 
-public sealed class ServiceScope : IServiceScope
+internal sealed class SlimServiceScope : IServiceScope
 {
     public System.IServiceProvider ServiceProvider { get; set; }
 
