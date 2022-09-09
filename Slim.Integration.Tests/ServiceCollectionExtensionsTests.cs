@@ -142,4 +142,29 @@ public sealed class ServiceCollectionExtensionsTests
         serviceProvider.Should().BeOfType<ServiceManager>();
         scopedServiceProvider.As<ServiceManager>().ParentServiceManager.Should().Be(serviceProvider);
     }
+
+    [TestMethod]
+    public void BuildSlimServiceProvider_SupportsSlimServiceProviderIsService_ReturnsTrueForRegisteredService()
+    {
+        var serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        ServiceCollectionServiceExtensions.AddTransient<ITestService, TestService>(serviceCollection);
+        var serviceProvider = serviceCollection.BuildSlimServiceProvider();
+
+        var isServiceApi = serviceProvider.GetRequiredService<IServiceProviderIsService>();
+
+        isServiceApi.IsService(typeof(ITestService)).Should().BeTrue();
+    }
+
+    [TestMethod]
+    public void BuildSlimServiceProvider_SupportsSlimServiceProviderIsService_ReturnsFalseForRegisteredService()
+    {
+        var serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        ServiceCollectionServiceExtensions.AddTransient<ITestService, TestService>(serviceCollection);
+        var serviceProvider = serviceCollection.BuildSlimServiceProvider();
+
+        var isServiceApi = serviceProvider.GetRequiredService<IServiceProviderIsService>();
+
+        isServiceApi.IsService(typeof(TestService)).Should().BeFalse();
+        isServiceApi.IsService(typeof(object)).Should().BeFalse();
+    }
 }
