@@ -257,7 +257,6 @@ public class ServiceManagerTests
     public void RegisterServiceManagerSingletonRegistersCurrentServiceManager()
     {
         var di = new ServiceManager();
-        di.RegisterServiceManager();
         di.RegisterSingleton<IDependentOnServiceManagerService, DependentOnServiceManagerService>();
 
         var dependentService = di.GetService<IDependentOnServiceManagerService>();
@@ -810,5 +809,22 @@ public class ServiceManagerTests
         var serviceManager = new ServiceManager();
 
         serviceManager.ParentServiceManager.Should().BeNull();
+    }
+
+    [TestMethod]
+    public void ScopedServiceManager_PassesThemselvesAsDependency()
+    {
+        var di = new ServiceManager();
+        di.RegisterScoped<IDependentOnServiceManagerService, DependentOnServiceManagerService>();
+        var scopedDi = di.CreateScope();
+
+        var dependentService1 = di.GetService<IDependentOnServiceManagerService>();
+        var dependentService2 = scopedDi.GetService<IDependentOnServiceManagerService>();
+
+        dependentService1.ServiceManager.Should().NotBe(dependentService2.ServiceManager);
+        dependentService1.ServiceProducer.Should().NotBe(dependentService2.ServiceProducer);
+        dependentService1.ServiceProvider.Should().NotBe(dependentService2.ServiceProvider);
+        dependentService1.ServiceManager.Should().Be(di);
+        dependentService2.ServiceManager.Should().Be(scopedDi);
     }
 }
