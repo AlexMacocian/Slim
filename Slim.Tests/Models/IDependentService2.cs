@@ -1,7 +1,6 @@
-﻿namespace Slim.Tests.Models
+﻿namespace Slim.Tests.Models;
+
+public interface IDependentService2
 {
-    public interface IDependentService2
-    {
-        public IndependentService IndependentService { get; }
-    }
+    public IndependentService IndependentService { get; }
 }

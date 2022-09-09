@@ -1,9 +1,8 @@
-﻿namespace Slim.Tests.Models
+﻿namespace Slim.Tests.Models;
+
+public sealed class PrivateConstructorService : IPrivateConstructorService
 {
-    public sealed class PrivateConstructorService : IPrivateConstructorService
+    private PrivateConstructorService()
     {
-        private PrivateConstructorService()
-        {
-        }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace Slim.Tests.Models
+namespace Slim.Tests.Models;
+
+public sealed class ThrowingService : IThrowingService
 {
-    public sealed class ThrowingService : IThrowingService
+    public ThrowingService()
     {
-        public ThrowingService()
-        {
-            throw new InvalidOperationException();
-        }
+        throw new InvalidOperationException();
     }
 }

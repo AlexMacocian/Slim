@@ -1,9 +1,8 @@
-﻿namespace Slim.Tests.Models
+﻿namespace Slim.Tests.Models;
+
+public interface IDependentOnServiceManagerService
 {
-    public interface IDependentOnServiceManagerService
-    {
-        IServiceManager ServiceManager { get; }
-        IServiceProducer ServiceProducer { get; }
-        IServiceProvider ServiceProvider { get; }
-    }
+    IServiceManager ServiceManager { get; }
+    IServiceProducer ServiceProducer { get; }
+    IServiceProvider ServiceProvider { get; }
 }

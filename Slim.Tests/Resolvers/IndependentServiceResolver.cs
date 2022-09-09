@@ -2,26 +2,25 @@
 using Slim.Tests.Models;
 using System;
 
-namespace Slim.Tests.Resolvers
+namespace Slim.Tests.Resolvers;
+
+public class IndependentServiceResolver : IDependencyResolver
 {
-    public class IndependentServiceResolver : IDependencyResolver
+    public int Called { get; private set; }
+
+    public bool CanResolve(Type type)
     {
-        public int Called { get; private set; }
-
-        public bool CanResolve(Type type)
+        if (type == typeof(IIndependentService))
         {
-            if (type == typeof(IIndependentService))
-            {
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
-        public object Resolve(IServiceProvider serviceProvider, Type type)
-        {
-            this.Called++;
-            return new IndependentService();
-        }
+        return false;
+    }
+
+    public object Resolve(IServiceProvider serviceProvider, Type type)
+    {
+        this.Called++;
+        return new IndependentService();
     }
 }

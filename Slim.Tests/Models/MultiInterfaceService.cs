@@ -1,6 +1,5 @@
-﻿namespace Slim.Tests.Models
+﻿namespace Slim.Tests.Models;
+
+public class MultiInterfaceService : IMultiInterfaceService1, IMultiInterfaceService2
 {
-    public class MultiInterfaceService : IMultiInterfaceService1, IMultiInterfaceService2
-    {
-    }
 }

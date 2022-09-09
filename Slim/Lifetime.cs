@@ -1,9 +1,8 @@
-﻿namespace Slim
+﻿namespace Slim;
+
+internal enum Lifetime
 {
-    internal enum Lifetime
-    {
-        Transient,
-        Singleton,
-        Scoped
-    }
+    Transient,
+    Singleton,
+    Scoped
 }

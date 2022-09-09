@@ -1,13 +1,12 @@
-﻿namespace Slim.Tests.Models
-{
-    public sealed class DependentOnPrivateCtrService : IDependentOnPrivateCtrService
-    {
-        private readonly IPrivateConstructorService privateConstructorService;
+﻿namespace Slim.Tests.Models;
 
-        public DependentOnPrivateCtrService(
-            IPrivateConstructorService privateConstructorService)
-        {
-            this.privateConstructorService = privateConstructorService;
-        }
+public sealed class DependentOnPrivateCtrService : IDependentOnPrivateCtrService
+{
+    private readonly IPrivateConstructorService privateConstructorService;
+
+    public DependentOnPrivateCtrService(
+        IPrivateConstructorService privateConstructorService)
+    {
+        this.privateConstructorService = privateConstructorService;
     }
 }

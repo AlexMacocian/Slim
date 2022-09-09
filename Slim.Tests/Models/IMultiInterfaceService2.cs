@@ -1,6 +1,5 @@
-﻿namespace Slim.Tests.Models
+﻿namespace Slim.Tests.Models;
+
+public interface IMultiInterfaceService2
 {
-    public interface IMultiInterfaceService2
-    {
-    }
 }

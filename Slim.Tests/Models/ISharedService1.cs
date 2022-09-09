@@ -1,6 +1,5 @@
-﻿namespace Slim.Tests.Models
+﻿namespace Slim.Tests.Models;
+
+public interface ISharedService1 : ISharedInterface
 {
-    public interface ISharedService1 : ISharedInterface
-    {
-    }
 }

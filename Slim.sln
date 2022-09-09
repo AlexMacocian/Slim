@@ -16,6 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{
 		.github\workflows\ci.yaml = .github\workflows\ci.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slim.Integration", "Slim.Integration\Slim.Integration.csproj", "{13975492-5299-4589-91C1-C33E4FCEDD72}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D20E2AFD-6BE0-4CCC-AD87-D2961CD1763B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +37,10 @@ Global
 		{F03F7353-0BD5-4691-A318-BC6FC93AB00E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F03F7353-0BD5-4691-A318-BC6FC93AB00E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F03F7353-0BD5-4691-A318-BC6FC93AB00E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13975492-5299-4589-91C1-C33E4FCEDD72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13975492-5299-4589-91C1-C33E4FCEDD72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13975492-5299-4589-91C1-C33E4FCEDD72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13975492-5299-4589-91C1-C33E4FCEDD72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
