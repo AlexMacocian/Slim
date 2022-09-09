@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
             }
         }
 
+        serviceManager.RegisterScoped<IServiceScopeFactory, ServiceScopeFactory>();
         return serviceManager;
     }
 

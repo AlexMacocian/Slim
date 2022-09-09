@@ -20,6 +20,7 @@ jobs:
       Solution_Path: Slim.sln
       Test_Project_Path: Slim.Tests\Slim.Tests.csproj
       Source_Project_Path: Slim\Slim.csproj
+      Integration_Project_Path: Slim.Integration\Slim.Integration.csproj
       Actions_Allow_Unsecure_Commands: true
 
     steps:
@@ -44,8 +45,11 @@ jobs:
     - name: Build Slim project
       run: dotnet build Slim -c $env:Configuration
 
-    - name: Package
+    - name: Package Slim
       run: dotnet pack -c Release -o . $env:Source_Project_Path
+
+    - name: Package Slim.Integration
+      run: dotnet pack -c Release -o . $env:Integration_Project_Path
 
     - name: Publish
       run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Slim.Integration.ServiceCollection;
 
@@ -15,6 +14,7 @@ public sealed class ServiceScopeFactory : IServiceScopeFactory
 
     public IServiceScope CreateScope()
     {
-        throw new NotImplementedException();
+        IServiceProvider scopedServiceManager = this.serviceManager.CreateScope();
+        return new ServiceScope { ServiceProvider = scopedServiceManager };
     }
 }
