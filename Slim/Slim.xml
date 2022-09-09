@@ -59,6 +59,11 @@
             Interface for <see cref="T:Slim.ServiceManager"/>.
             </summary>
         </member>
+        <member name="P:Slim.IServiceManager.ParentServiceManager">
+            <summary>
+            Gets the <see cref="T:Slim.IServiceManager"/> that created the current <see cref="T:Slim.IServiceManager"/>. Returns null in case there is no parent.
+            </summary>
+        </member>
         <member name="P:Slim.IServiceManager.AllowScopedManagerModifications">
             <summary>
             Allow modifications to scoped <see cref="T:Slim.IServiceManager"/> created from this <see cref="T:Slim.IServiceManager"/>.
@@ -414,6 +419,11 @@
         <member name="P:Slim.ServiceManager.IsReadOnly">
             <summary>
             Returns true if <see cref="T:Slim.IServiceManager"/> is readonly.
+            </summary>
+        </member>
+        <member name="P:Slim.ServiceManager.ParentServiceManager">
+            <summary>
+            Gets the <see cref="T:Slim.IServiceManager"/> that created the current <see cref="T:Slim.IServiceManager"/>. Returns null in case there is no parent.
             </summary>
         </member>
         <member name="M:Slim.ServiceManager.#ctor">

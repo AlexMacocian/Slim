@@ -7,26 +7,19 @@
     <Authors>Alexandru Macocian</Authors>
     <Company />
     <Product></Product>
-    <Description>Service lifetime management and dependency injection framework.</Description>
-    <AssemblyVersion>1.9</AssemblyVersion>
-    <FileVersion>1.9</FileVersion>
+    <Description>Integration with Microsoft.DependencyInjection library.</Description>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
     <PackageProjectUrl>https://github.com/AlexMacocian/Slim</PackageProjectUrl>
-    <Version>1.9</Version>
+    <Version>1.0.0</Version>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Users\Owner\source\repos\Slim\Slim\Slim.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <None Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="..\README.md" Link="README.md" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Slim" Version="1.8.1" />
   </ItemGroup>
 
 </Project>

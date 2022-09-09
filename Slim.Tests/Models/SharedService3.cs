@@ -1,6 +1,5 @@
-﻿namespace Slim.Tests.Models
+﻿namespace Slim.Tests.Models;
+
+public sealed class SharedService3 : ISharedService3
 {
-    public sealed class SharedService3 : ISharedService3
-    {
-    }
 }

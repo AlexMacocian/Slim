@@ -1,19 +1,18 @@
-﻿namespace Slim.Tests.Models
-{
-    public class DependentOnServiceManagerService : IDependentOnServiceManagerService
-    {
-        public IServiceManager ServiceManager { get; }
-        public IServiceProducer ServiceProducer { get; }
-        public IServiceProvider ServiceProvider { get; }
+﻿namespace Slim.Tests.Models;
 
-        public DependentOnServiceManagerService(
-            IServiceManager serviceManager,
-            IServiceProvider serviceProvider,
-            IServiceProducer serviceProducer)
-        {
-            this.ServiceManager = serviceManager;
-            this.ServiceProvider = serviceProvider;
-            this.ServiceProducer = serviceProducer;
-        }
+public class DependentOnServiceManagerService : IDependentOnServiceManagerService
+{
+    public IServiceManager ServiceManager { get; }
+    public IServiceProducer ServiceProducer { get; }
+    public IServiceProvider ServiceProvider { get; }
+
+    public DependentOnServiceManagerService(
+        IServiceManager serviceManager,
+        IServiceProvider serviceProvider,
+        IServiceProducer serviceProducer)
+    {
+        this.ServiceManager = serviceManager;
+        this.ServiceProvider = serviceProvider;
+        this.ServiceProducer = serviceProducer;
     }
 }
