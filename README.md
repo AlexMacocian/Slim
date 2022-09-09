@@ -89,3 +89,15 @@ serviceManager.GetServicesOfType<ISharedInterface>();
 This will return an `IEnumerable<ISharedInterface>` with all the services which implement the `ISharedInterface`.
 
 In order to give priority to certain constructors in a class, mark the constructors with `[PreferredConstructor]` attribute. `ServiceManager` will prioritize those constructors.
+
+## Slim Integration with Microsoft.Extensions.DependencyInjection
+
+Slim.Integration package helps integrate with existing solutions.
+
+`SlimServiceContainer` provides an implementation for the `IServiceContainer` from `System.ComponentModel.Design`.
+
+`ServiceCollectionExtensions` contains an extension to the `ServiceCollection` which returns a `ServiceManager` as an `IServiceProvider`, capable of supporting all `ServiceLifetime` and provides support for `IServiceScope`.
+Call the extension to use the Slim implementation of `IServiceProvider`.
+```C#
+services.BuildSlimServiceProvider();
+```
