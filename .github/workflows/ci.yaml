@@ -21,6 +21,7 @@ jobs:
     env:
       Solution_Path: Slim.sln
       Test_Project_Path: Slim.Tests\Slim.Tests.csproj
+      Integration_Test_Project_Path: Slim.Integration.Tests\Slim.Integration.Tests.csproj
       Source_Project_Path: Slim\Slim.csproj
       Actions_Allow_Unsecure_Commands: true
 
@@ -38,8 +39,11 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.1
 
-    - name: Execute Unit Tests
+    - name: Execute Slim Unit Tests
       run: dotnet test $env:Test_Project_Path
+    
+    - name: Execute Slim.Integration Unit Tests
+      run: dotnet test $env:Integration_Test_Project_Path
 
     - name: Restore Project
       run: msbuild $env:Solution_Path /t:Restore /p:Configuration=$env:Configuration /p:RuntimeIdentifier=$env:RuntimeIdentifier
