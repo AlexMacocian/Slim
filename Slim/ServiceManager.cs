@@ -414,18 +414,6 @@ public sealed class ServiceManager : IServiceManager
     }
 
     /// <summary>
-    /// Register the current service manager as a valid dependency.
-    /// </summary>
-    /// <remarks>Registers current service manager as <see cref="ServiceManager"/>, <see cref="IServiceManager"/>, <see cref="IServiceProducer"/>, <see cref="IServiceProvider"/>.</remarks>
-    public void RegisterServiceManager()
-    {
-        this.RegisterSingleton<IServiceManager, ServiceManager>(sp => this);
-        this.RegisterSingleton<ServiceManager, ServiceManager>(sp => this);
-        this.RegisterSingleton<IServiceProducer, ServiceManager>(sp => this);
-        this.RegisterSingleton<IServiceProvider, ServiceManager>(sp => this);
-    }
-
-    /// <summary>
     /// Creates a scoped <see cref="IServiceProvider"/>.
     /// </summary>
     /// <returns>Scoped <see cref="IServiceProvider"/>.</returns>
@@ -620,6 +608,11 @@ public sealed class ServiceManager : IServiceManager
     {
         return this.TryFunc(() =>
         {
+            if (IsServiceManagerDependency(tinterface))
+            {
+                return true;
+            }
+
             lock (this)
             {
                 if (this.Resolvers.Any(resolver => resolver.CanResolve(tinterface)))
@@ -633,6 +626,11 @@ public sealed class ServiceManager : IServiceManager
     }
     private object GetObject(Type tInterface)
     {
+        if (IsServiceManagerDependency(tInterface))
+        {
+            return this;
+        }
+
         if (!this.InterfaceMapping.TryGetValue(tInterface, out var mappingTuple) &&
             this.Resolvers.Any(resolver => resolver.CanResolve(tInterface)) is false)
         {
@@ -723,6 +721,12 @@ public sealed class ServiceManager : IServiceManager
         var parameterImplementationList = new List<object>();
         foreach (var par in parameterInfos)
         {
+            if (IsServiceManagerDependency(par.ParameterType))
+            {
+                parameterImplementationList.Add(this);
+                continue;
+            }
+
             if (!this.InterfaceMapping.TryGetValue(par.ParameterType, out var mappingTuple))
             {
                 object resolvedParam = null;
@@ -909,5 +913,14 @@ public sealed class ServiceManager : IServiceManager
             this.Factories.Clear();
             this.disposedValue = true;
         }
+    }
+
+    private static bool IsServiceManagerDependency(Type type)
+    {
+        return type == typeof(IServiceManager) ||
+                type == typeof(IServiceProducer) ||
+                type == typeof(IServiceProvider) ||
+                type == typeof(ServiceManager) ||
+                type == typeof(System.IServiceProvider);
     }
 }
