@@ -101,6 +101,19 @@
             Interface allowing to produce services for the <see cref="T:Slim.ServiceManager"/>.
             </summary>
         </member>
+        <member name="M:Slim.IServiceProducer.Remove``1">
+            <summary>
+            Removes a registered service.
+            </summary>
+            <typeparam name="T">Registered interface.</typeparam>
+        </member>
+        <member name="M:Slim.IServiceProducer.Remove(System.Type)">
+            <summary>
+            Removes a registered service.
+            </summary>
+            <param name="tInterface">Registered interface.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
         <member name="M:Slim.IServiceProducer.IsRegistered(System.Type)">
             <summary>
             Returns true if there exists a registration for <paramref name="tInterface"/>.
@@ -709,6 +722,19 @@
             <param name="handle">Handler of the exception. Handler returns true if the exception should be thrown again.</param>
             <exception cref="T:System.ArgumentException"></exception>
             <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Slim.ServiceManager.Remove(System.Type)">
+            <summary>
+            Remove a registered service.
+            </summary>
+            <param name="tInterface">Registered type.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Slim.ServiceManager.Remove``1">
+            <summary>
+            Remove a registered service.
+            </summary>
+            <typeparam name="T">Registered interface.</typeparam>
         </member>
         <member name="M:Slim.ServiceManager.Clear">
             <summary>

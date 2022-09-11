@@ -9,6 +9,17 @@ namespace Slim;
 public interface IServiceProducer
 {
     /// <summary>
+    /// Removes a registered service.
+    /// </summary>
+    /// <typeparam name="T">Registered interface.</typeparam>
+    void Remove<T>();
+    /// <summary>
+    /// Removes a registered service.
+    /// </summary>
+    /// <param name="tInterface">Registered interface.</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    void Remove(Type tInterface);
+    /// <summary>
     /// Returns true if there exists a registration for <paramref name="tInterface"/>.
     /// </summary>
     /// <param name="tInterface">Type of registered service.</param>

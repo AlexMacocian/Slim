@@ -470,6 +470,25 @@ public sealed class ServiceManager : IServiceManager
         this.ExceptionHandlers.Add(typeof(T), handle);
     }
     /// <summary>
+    /// Remove a registered service.
+    /// </summary>
+    /// <param name="tInterface">Registered type.</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public void Remove(Type tInterface)
+    {
+        _ = tInterface ?? throw new ArgumentNullException(nameof(tInterface));
+
+        this.RemoveService(tInterface);
+    }
+    /// <summary>
+    /// Remove a registered service.
+    /// </summary>
+    /// <typeparam name="T">Registered interface.</typeparam>
+    public void Remove<T>()
+    {
+        this.RemoveService(typeof(T));
+    }
+    /// <summary>
     /// Clears all registered types, singletons, factories and exception handlers.
     /// </summary>
     /// <remarks>
@@ -586,6 +605,22 @@ public sealed class ServiceManager : IServiceManager
             lock (this)
             {
                 this.Factories[tinterface] = factory;
+            }
+        });
+    }
+    private void RemoveService(Type tInterface)
+    {
+        this.TryAction(() =>
+        {
+            lock (this)
+            {
+                this.Factories.Remove(tInterface);
+                this.InterfaceMapping.Remove(tInterface);
+                if (this.Instances.TryGetValue(tInterface, out var service) &&
+                    service is IDisposable disposableService)
+                {
+                    disposableService.Dispose();
+                }
             }
         });
     }
