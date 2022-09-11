@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Design;
 using FluentAssertions;
+using Slim.Exceptions;
 using Slim.Integration.ServiceContainer;
 using Slim.Integration.Tests.Models;
 
@@ -65,18 +66,27 @@ public class SlimServiceContainerTests
     }
 
     [TestMethod]
-    public void RemoveService_NotSupported()
+    public void RemoveService_RemovesService()
     {
-        var action =  () => this.slimServiceContainer.RemoveService(typeof(ITestService));
+        this.slimServiceContainer.AddService(typeof(ITestService), new TestService());
+        this.slimServiceContainer.RemoveService(typeof(ITestService));
 
-        action.Should().Throw<NotSupportedException>();
+        var action = () => this.slimServiceContainer.GetService(typeof(ITestService));
+
+        action.Should().Throw<DependencyInjectionException>();
     }
 
     [TestMethod]
-    public void RemoveServiceWithPromotion_NotSupported()
+    public void RemoveServiceWithPromotion_RemoveServiceFromParent()
     {
-        var action = () => this.slimServiceContainer.RemoveService(typeof(ITestService), true);
+        var testService = new TestService();
+        var parent = new ServiceManager() { AllowScopedManagerModifications = true };
+        var child = parent.CreateScope().As<ServiceManager>();
+        var container = new SlimServiceContainer(child);
 
-        action.Should().Throw<NotSupportedException>();
+        container.RemoveService(typeof(TestService), true);
+        var action = () => parent.GetService(typeof(ITestService));
+
+        action.Should().Throw<DependencyInjectionException>();
     }
 }

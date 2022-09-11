@@ -8,10 +8,10 @@
     <Company />
     <Product></Product>
     <Description>Integration with Microsoft.DependencyInjection library.</Description>
-    <AssemblyVersion>1.0.3</AssemblyVersion>
-    <FileVersion>1.0.3</FileVersion>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
     <PackageProjectUrl>https://github.com/AlexMacocian/Slim</PackageProjectUrl>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Slim" Version="1.9.1" />
+    <PackageReference Include="Slim" Version="1.9.2" />
   </ItemGroup>
 
   <ItemGroup>

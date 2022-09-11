@@ -66,11 +66,22 @@ public class SlimServiceContainer : IServiceContainer
 
     public void RemoveService(Type serviceType)
     {
-        throw new NotSupportedException("Removing one service is not currently supported");
+        this.serviceManager.Remove(serviceType);
     }
 
     public void RemoveService(Type serviceType, bool promote)
     {
-        throw new NotSupportedException("Removing one service is not currently supported");
+        var manager = this.serviceManager;
+        if (promote is false)
+        {
+            manager.Remove(serviceType);
+            return;
+        }
+
+        while (manager is not null)
+        {
+            manager.Remove(serviceType);
+            manager = manager.ParentServiceManager;
+        }
     }
 }
