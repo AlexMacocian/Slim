@@ -827,4 +827,41 @@ public class ServiceManagerTests
         dependentService1.ServiceManager.Should().Be(di);
         dependentService2.ServiceManager.Should().Be(scopedDi);
     }
+
+    [TestMethod]
+    public void ServiceManager_RemoveService_RemovesService()
+    {
+        var di = new ServiceManager();
+        di.RegisterSingleton<IIndependentService, IndependentService>();
+        var service = di.GetService<IIndependentService>();
+
+        di.Remove<IIndependentService>();
+        var action = () => di.GetService<IIndependentService>();
+
+        service.Should().BeOfType<IndependentService>();
+        action.Should().Throw<DependencyInjectionException>();
+    }
+
+    [TestMethod]
+    public void ServiceManager_NoServiceRemoveService_Returns()
+    {
+        var di = new ServiceManager();
+
+        di.Remove<IIndependentService>();
+    }
+
+    [TestMethod]
+    public void ServiceManager_DependentService_StillReturnsAfterDependencyIsRemoved()
+    {
+        var di = new ServiceManager();
+        di.RegisterSingleton<IIndependentService, IndependentService>();
+        di.RegisterSingleton<IDependentService, DependentService>();
+        di.GetService<IDependentService>();
+
+        di.Remove<IIndependentService>();
+
+        var service = di.GetService<IDependentService>();
+
+        service.Should().BeOfType<DependentService>();
+    }
 }
