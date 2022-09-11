@@ -191,4 +191,17 @@ public sealed class ServiceCollectionExtensionsTests
 
         services.Should().HaveCount(0);
     }
+
+    [TestMethod]
+    public void BuildSlimServiceProvider_WithExistingServiceManager_UsesExistingServiceManager()
+    {
+        var serviceManager = new ServiceManager();
+        serviceManager.RegisterSingleton<ITestService, TestService>();
+        var serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        var serviceProvider = serviceCollection.BuildSlimServiceProvider(serviceManager);
+
+        var testService = serviceProvider.GetRequiredService<ITestService>();
+
+        testService.Should().NotBeNull();
+    }
 }
