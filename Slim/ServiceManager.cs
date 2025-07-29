@@ -453,14 +453,9 @@ public sealed class ServiceManager : IServiceManager
     /// <typeparam name="TInterface">Type of required service.</typeparam>
     /// <returns>Required service.</returns>
     /// <exception cref="DependencyInjectionException">Thrown when unable to resolve required service.</exception>
-    public TInterface GetService<TInterface>() where TInterface : class
+    public TInterface? GetService<TInterface>() where TInterface : class
     {
-        if (this.PrepareAndGetService(typeof(TInterface)) is not TInterface result)
-        {
-            throw new DependencyInjectionException($"Unable to resolve service of type {typeof(TInterface).FullName}.");
-        }
-
-        return result;
+        return this.PrepareAndGetService(typeof(TInterface)) as TInterface;
     }
 
     /// <summary>
@@ -469,9 +464,9 @@ public sealed class ServiceManager : IServiceManager
     /// <param name="type">Type of required service.</param>
     /// <returns>Required service.</returns>
     /// <exception cref="DependencyInjectionException">Thrown when unable to resolve required service.</exception>
-    public object GetService(Type type)
+    public object? GetService(Type type)
     {
-        return this.PrepareAndGetService(type) ?? throw new DependencyInjectionException($"Unable to resolve service of type {type.FullName}");
+        return this.PrepareAndGetService(type);
     }
 
     /// <summary>
@@ -724,7 +719,7 @@ public sealed class ServiceManager : IServiceManager
         });
     }
 
-    private object GetObject(Type tInterface)
+    private object? GetObject(Type tInterface)
     {
         if (IsServiceManagerDependency(tInterface))
         {
@@ -734,7 +729,7 @@ public sealed class ServiceManager : IServiceManager
         if (!this.InterfaceMapping.TryGetValue(tInterface, out var mappingTuples) &&
             this.Resolvers.Any(resolver => resolver.CanResolve(tInterface)) is false)
         {
-            throw new DependencyInjectionException($"No registered service and no resolver can resolve for type {tInterface.Name}.");
+            return default;
         }
 
         var tuple = mappingTuples?.FirstOrDefault();

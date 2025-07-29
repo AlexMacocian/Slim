@@ -30,5 +30,5 @@ public interface IServiceProvider : System.IServiceProvider, IDisposable
     /// <typeparam name="TInterface">Type of required service.</typeparam>
     /// <returns>Required service.</returns>
     /// <exception cref="DependencyInjectionException">Thrown when unable to resolve required service.</exception>
-    TInterface GetService<TInterface>() where TInterface : class;
+    TInterface? GetService<TInterface>() where TInterface : class;
 }

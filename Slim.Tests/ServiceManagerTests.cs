@@ -68,10 +68,11 @@ public class ServiceManagerTests
     }
 
     [TestMethod]
-    public void RetrieveThrowsNotRegistered()
+    public void RetrieveNotRegisteredReturnsNull()
     {
         var di = new ServiceManager();
-        Assert.ThrowsException<DependencyInjectionException>(() => { di.GetService<IDependentService>(); });
+
+        di.GetService<IDependentService>().Should().BeNull();
     }
 
     [TestMethod]
@@ -311,18 +312,14 @@ public class ServiceManagerTests
     }
 
     [TestMethod]
-    public void ClearAndGetShouldThrow()
+    public void ClearAndGetShouldReturnNull()
     {
         var di = new ServiceManager();
         di.RegisterSingleton<IIndependentService, IndependentService>();
 
-        var action = new Action(() =>
-        {
-            di.GetService<IndependentService>();
-        });
         di.Clear();
 
-        action.Should().Throw<DependencyInjectionException>();
+        di.GetService<IndependentService>().Should().BeNull();
     }
 
     [TestMethod]
@@ -635,17 +632,8 @@ public class ServiceManagerTests
         di.RegisterSingleton<MultiInterfaceService>();
 
         di.GetService<MultiInterfaceService>().Should().NotBeNull();
-        var action = new Action(() =>
-        {
-            di.GetService<IMultiInterfaceService1>();
-        });
-        var action2 = new Action(() =>
-        {
-            di.GetService<IMultiInterfaceService2>();
-        });
-
-        action.Should().Throw<Exception>();
-        action2.Should().Throw<Exception>();
+        di.GetService<IMultiInterfaceService1>().Should().BeNull();
+        di.GetService<IMultiInterfaceService2>().Should().BeNull();
     }
 
     [TestMethod]
@@ -791,12 +779,7 @@ public class ServiceManagerTests
         var di = new ServiceManager();
         di.RegisterSingleton<DoNotInjectConstructorService>();
 
-        var action = () =>
-        {
-            var service = di.GetService<ServiceWithPrefferedConstructor>();
-        };
-
-        action.Should().Throw<DependencyInjectionException>();
+        di.GetService<ServiceWithPrefferedConstructor>().Should().BeNull();
     }
 
     [TestMethod]
@@ -842,10 +825,9 @@ public class ServiceManagerTests
         var service = di.GetService<IIndependentService>();
 
         di.Remove<IIndependentService>();
-        var action = () => di.GetService<IIndependentService>();
-
+        
         service.Should().BeOfType<IndependentService>();
-        action.Should().Throw<DependencyInjectionException>();
+        di.GetService<IIndependentService>().Should().BeNull();
     }
 
     [TestMethod]
