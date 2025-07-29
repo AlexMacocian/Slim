@@ -807,7 +807,7 @@ public sealed class ServiceManager : IServiceManager
         /*
          * Order constructors to give priority to constructors that have PrefferedConstructorAttribute decorator
          */
-        var constructors = implementType.GetConstructors()
+        var constructors = implementType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
             .Where(c => c.GetCustomAttribute<DoNotInjectAttribute>() is null)
             .OrderBy(c =>
             c.GetCustomAttribute<PreferredConstructorAttribute>() is PreferredConstructorAttribute preferredConstructorAttribute ?

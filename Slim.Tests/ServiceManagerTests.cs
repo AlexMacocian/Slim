@@ -27,18 +27,15 @@ public class ServiceManagerTests
     }
 
     [TestMethod]
-    public void DependencyOnPrivateConstructorServiceThrows()
+    public void DependencyOnPrivateConstructorServiceImplements()
     {
         var di = new ServiceManager();
         di.RegisterSingleton<IPrivateConstructorService, PrivateConstructorService>();
         di.RegisterSingleton<IDependentOnPrivateCtrService, DependentOnPrivateCtrService>();
 
-        var action = new Action(() =>
-        {
-            di.GetService<IDependentOnPrivateCtrService>();
-        });
+        var service = di.GetService<IDependentOnPrivateCtrService>();
 
-        action.Should().Throw<DependencyInjectionException>();
+        service.Should().NotBeNull();
     }
 
     [TestMethod]

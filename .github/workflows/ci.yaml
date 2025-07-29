@@ -1,4 +1,4 @@
-name:  Slim CI Pipeline
+name: Slim CI Pipeline
 
 on:
   push:
@@ -9,9 +9,7 @@ on:
       - master
 
 jobs:
-
   build:
-
     strategy:
       matrix:
         targetplatform: [x64]
@@ -23,27 +21,26 @@ jobs:
       Test_Project_Path: Slim.Tests\Slim.Tests.csproj
       Integration_Test_Project_Path: Slim.Integration.Tests\Slim.Integration.Tests.csproj
       Source_Project_Path: Slim\Slim.csproj
-      Actions_Allow_Unsecure_Commands: true
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Install .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.x'
 
+    - name: Restore dependencies
+      run: dotnet restore $env:Solution_Path
+
+    - name: Build solution
+      run: dotnet build $env:Solution_Path --no-restore --configuration Release
+
     - name: Execute Slim Unit Tests
-      run: dotnet test $env:Test_Project_Path
+      run: dotnet test $env:Test_Project_Path --no-build --configuration Release --verbosity normal
     
     - name: Execute Slim.Integration Unit Tests
-      run: dotnet test $env:Integration_Test_Project_Path
-
-    - name: Restore Project
-      run: msbuild $env:Solution_Path /t:Restore /p:Configuration=$env:Configuration /p:RuntimeIdentifier=$env:RuntimeIdentifier
-      env:
-        Configuration: Debug
-        RuntimeIdentifier: win-${{ matrix.targetplatform }}
+      run: dotnet test $env:Integration_Test_Project_Path --no-build --configuration Release --verbosity normal
