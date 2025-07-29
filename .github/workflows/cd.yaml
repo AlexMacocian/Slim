@@ -32,10 +32,7 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.x'
-
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.1
+        dotnet-version: '9.x'
 
     - name: Restore project
       run: msbuild $env:Solution_Path /t:Restore /p:Configuration=$env:Configuration /p:RuntimeIdentifier=$env:RuntimeIdentifier
@@ -45,7 +42,7 @@ jobs:
     - name: Build Slim project
       run: dotnet build Slim -c $env:Configuration
 
-    - name: Build Slim project
+    - name: Build Slim.Integration project
       run: dotnet build $env:Integration_Project_Path -c $env:Configuration
 
     - name: Package Slim
