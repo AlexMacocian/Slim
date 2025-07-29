@@ -34,11 +34,6 @@ jobs:
       with:
         dotnet-version: '9.x'
 
-    - name: Restore project
-      run: msbuild $env:Solution_Path /t:Restore /p:Configuration=$env:Configuration /p:RuntimeIdentifier=$env:RuntimeIdentifier
-      env:
-        RuntimeIdentifier: win-${{ matrix.targetplatform }}
-
     - name: Build Slim project
       run: dotnet build Slim -c $env:Configuration
 
