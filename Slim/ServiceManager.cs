@@ -16,11 +16,11 @@ public sealed class ServiceManager : IServiceManager
     private bool disposedValue;
     private readonly bool scoped = false;
 
-    private Dictionary<Type, (Type, Lifetime)> InterfaceMapping { get; } = new Dictionary<Type, (Type, Lifetime)>();
-    private Dictionary<Type, object> Instances { get; } = new Dictionary<Type, object>();
-    private Dictionary<Type, Delegate> Factories { get; } = new Dictionary<Type, Delegate>();
-    private Dictionary<Type, Delegate> ExceptionHandlers { get; } = new Dictionary<Type, Delegate>();
-    private List<IDependencyResolver> Resolvers { get; } = new List<IDependencyResolver>();
+    private Dictionary<Type, List<(Type, Lifetime)>> InterfaceMapping { get; } = [];
+    private Dictionary<Type, List<object>> Instances { get; } = [];
+    private Dictionary<Type, List<Delegate>> Factories { get; } = [];
+    private Dictionary<Type, Delegate> ExceptionHandlers { get; } = [];
+    private List<IDependencyResolver> Resolvers { get; } = [];
 
     /// <summary>
     /// Allow modifications to scoped <see cref="IServiceManager"/> created from this <see cref="IServiceManager"/>.
@@ -33,7 +33,7 @@ public sealed class ServiceManager : IServiceManager
     /// <summary>
     /// Gets the <see cref="IServiceManager"/> that created the current <see cref="IServiceManager"/>. Returns null in case there is no parent.
     /// </summary>
-    public IServiceManager ParentServiceManager { get; }
+    public IServiceManager? ParentServiceManager { get; }
 
     /// <summary>
     /// Creates an instance of <see cref="IServiceManager"/>.
@@ -43,9 +43,9 @@ public sealed class ServiceManager : IServiceManager
     }
 
     private ServiceManager(
-        Dictionary<Type, (Type, Lifetime)> interfaceMapping,
-        Dictionary<Type, object> singletons,
-        Dictionary<Type, Delegate> factories,
+        Dictionary<Type, List<(Type, Lifetime)>> interfaceMapping,
+        Dictionary<Type, List<object>> singletons,
+        Dictionary<Type, List<Delegate>> factories,
         Dictionary<Type, Delegate> exceptionHandlers,
         List<IDependencyResolver> resolvers,
         IServiceManager parent,
@@ -70,6 +70,7 @@ public sealed class ServiceManager : IServiceManager
     {
         return this.IsMapped(tInterface);
     }
+
     /// <summary>
     /// Returns true if there exists a registration for <typeparamref name="T"/>.
     /// </summary>
@@ -79,6 +80,7 @@ public sealed class ServiceManager : IServiceManager
     {
         return this.IsMapped(typeof(T));
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
     /// </summary>
@@ -91,6 +93,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(typeof(TClass), Lifetime.Transient, typeof(TInterface));
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
     /// </summary>
@@ -110,6 +113,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(typeof(TClass), Lifetime.Transient, typeof(TInterface), serviceFactory);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
     /// </summary>
@@ -122,6 +126,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(typeof(TClass), Lifetime.Singleton, typeof(TInterface));
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
     /// </summary>
@@ -141,6 +146,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(typeof(TClass), Lifetime.Singleton, typeof(TInterface), serviceFactory);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
     /// </summary>
@@ -153,6 +159,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(typeof(TClass), Lifetime.Scoped, typeof(TInterface));
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
     /// </summary>
@@ -172,6 +179,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(typeof(TClass), Lifetime.Scoped, typeof(TInterface), serviceFactory);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
     /// </summary>
@@ -182,6 +190,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(tClass, Lifetime.Transient, tInterface);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
     /// </summary>
@@ -199,6 +208,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(tClass, Lifetime.Transient, tInterface, serviceFactory);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
     /// </summary>
@@ -209,6 +219,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(tClass, Lifetime.Singleton, tInterface);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
     /// </summary>
@@ -226,6 +237,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(tClass, Lifetime.Singleton, tInterface, serviceFactory);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
     /// </summary>
@@ -236,6 +248,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(tClass, Lifetime.Scoped, tInterface);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
     /// </summary>
@@ -253,6 +266,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(tClass, Lifetime.Scoped, tInterface, serviceFactory);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
     /// Registers the service for all interfaces it implements.
@@ -264,6 +278,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(typeof(TClass), Lifetime.Singleton, registerAllInterfaces: registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
     /// Registers the service for all interfaces it implements.
@@ -282,6 +297,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(typeof(TClass), Lifetime.Singleton, null, serviceFactory, registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
     /// Registers the service for all interfaces it implements.
@@ -293,6 +309,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(typeof(TClass), Lifetime.Transient, registerAllInterfaces: registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
     /// Registers the service for all interfaces it implements.
@@ -311,6 +328,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(typeof(TClass), Lifetime.Transient, null, serviceFactory, registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
     /// Registers the service for all interfaces it implements.
@@ -322,6 +340,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(typeof(TClass), Lifetime.Scoped, registerAllInterfaces: registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
     /// Registers the service for all interfaces it implements.
@@ -340,6 +359,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RegisterService(typeof(TClass), Lifetime.Scoped, null, serviceFactory, registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
     /// Registers the service for all interfaces it implements.
@@ -351,6 +371,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(tClass, Lifetime.Transient, registerAllInterfaces: registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Transient"/>.
     /// Registers the service for all interfaces it implements.
@@ -364,6 +385,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(tClass, Lifetime.Transient, null, serviceFactory, registerAllInterfaces: registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
     /// Registers the service for all interfaces it implements.
@@ -375,6 +397,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(tClass, Lifetime.Singleton, registerAllInterfaces: registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Singleton"/>.
     /// Registers the service for all interfaces it implements.
@@ -388,6 +411,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(tClass, Lifetime.Singleton, null, serviceFactory, registerAllInterfaces: registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
     /// Registers the service for all interfaces it implements.
@@ -399,6 +423,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RegisterService(tClass, Lifetime.Scoped, registerAllInterfaces: registerAllInterfaces);
     }
+
     /// <summary>
     /// Register a service into <see cref="ServiceManager"/> with <see cref="Lifetime.Scoped"/>.
     /// Registers the service for all interfaces it implements.
@@ -421,6 +446,7 @@ public sealed class ServiceManager : IServiceManager
     {
         return this.CreateScopeInner();
     }
+
     /// <summary>
     /// Resolves and returns the required service.
     /// </summary>
@@ -429,8 +455,14 @@ public sealed class ServiceManager : IServiceManager
     /// <exception cref="DependencyInjectionException">Thrown when unable to resolve required service.</exception>
     public TInterface GetService<TInterface>() where TInterface : class
     {
-        return this.PrepareAndGetService(typeof(TInterface)) as TInterface;
+        if (this.PrepareAndGetService(typeof(TInterface)) is not TInterface result)
+        {
+            throw new DependencyInjectionException($"Unable to resolve service of type {typeof(TInterface).FullName}.");
+        }
+
+        return result;
     }
+
     /// <summary>
     /// Resolves and returns the required service.
     /// </summary>
@@ -439,8 +471,9 @@ public sealed class ServiceManager : IServiceManager
     /// <exception cref="DependencyInjectionException">Thrown when unable to resolve required service.</exception>
     public object GetService(Type type)
     {
-        return this.PrepareAndGetService(type);
+        return this.PrepareAndGetService(type) ?? throw new DependencyInjectionException($"Unable to resolve service of type {type.FullName}");
     }
+
     /// <summary>
     /// Returns all services that can be cast to provided type.
     /// </summary>
@@ -449,6 +482,7 @@ public sealed class ServiceManager : IServiceManager
     {
         return this.EnumerateAndReturnServicesOfType(typeof(T)).OfType<T>();
     }
+
     /// <summary>
     /// Returns all services that can be cast to provided type.
     /// </summary>
@@ -457,6 +491,7 @@ public sealed class ServiceManager : IServiceManager
     {
         return this.EnumerateAndReturnServicesOfType(type);
     }
+
     /// <summary>
     /// Marks a type of exception to be caught and handled.
     /// </summary>
@@ -469,6 +504,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.ExceptionHandlers.Add(typeof(T), handle);
     }
+
     /// <summary>
     /// Remove a registered service.
     /// </summary>
@@ -480,6 +516,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.RemoveService(tInterface);
     }
+
     /// <summary>
     /// Remove a registered service.
     /// </summary>
@@ -488,6 +525,7 @@ public sealed class ServiceManager : IServiceManager
     {
         this.RemoveService(typeof(T));
     }
+
     /// <summary>
     /// Clears all registered types, singletons, factories and exception handlers.
     /// </summary>
@@ -502,7 +540,7 @@ public sealed class ServiceManager : IServiceManager
         }
 
         this.InterfaceMapping.Clear();
-        foreach (var singleton in this.Instances.Values.Where(s => s is IDisposable).Select(s => (IDisposable)s))
+        foreach (var singleton in this.Instances.Values.SelectMany(instances => instances).Where(s => s is IDisposable).Select(s => (IDisposable)s))
         {
             singleton.Dispose();
         }
@@ -510,16 +548,24 @@ public sealed class ServiceManager : IServiceManager
         this.Factories.Clear();
         this.ExceptionHandlers.Clear();
     }
+
     /// <summary>
     /// Build all registered singletons.
     /// </summary>
     public void BuildSingletons()
     {
-        foreach (var mapping in this.InterfaceMapping.Where(map => map.Value.Item2 == Lifetime.Singleton))
+        foreach(var mapping in this.InterfaceMapping)
         {
-            this.GetService(mapping.Key);
+            foreach(var kvp in mapping.Value)
+            {
+                if (kvp.Item2 is Lifetime.Singleton)
+                {
+                    this.GetService(mapping.Key);
+                }
+            }
         }
     }
+
     /// <summary>
     /// Register a <see cref="IDependencyResolver"/> that manually resolves dependencies.
     /// </summary>
@@ -536,6 +582,7 @@ public sealed class ServiceManager : IServiceManager
 
         this.Resolvers.Add(dependencyResolver);
     }
+
     /// <summary>
     /// Cleans up resources and disposes of all disposable singletons.
     /// </summary>
@@ -548,14 +595,19 @@ public sealed class ServiceManager : IServiceManager
     {
         foreach (var kvp in this.InterfaceMapping)
         {
-            var objectType = kvp.Value.Item1;
-            if (type.IsAssignableFrom(objectType))
+            foreach(var registration in kvp.Value)
             {
-                yield return this.PrepareAndGetService(kvp.Key);
+                var objectType = registration.Item1;
+                if (type.IsAssignableFrom(objectType) &&
+                    this.PrepareAndGetService(kvp.Key) is object obj)
+                {
+                    yield return obj;
+                }
             }
         }
     }
-    private void RegisterService(Type tClass, Lifetime lifetime, Type tInterface = null, Delegate serviceFactory = null, bool registerAllInterfaces = false)
+
+    private void RegisterService(Type tClass, Lifetime lifetime, Type? tInterface = null, Delegate? serviceFactory = null, bool registerAllInterfaces = false)
     {
         if (this.IsReadOnly)
         {
@@ -591,23 +643,32 @@ public sealed class ServiceManager : IServiceManager
             this.RegisterFactory(tClass, serviceFactory);
         }
     }
-    private object PrepareAndGetService(Type tInterface)
+
+    private object? PrepareAndGetService(Type tInterface)
     {
         return this.TryFunc(() =>
         {
             return this.GetObject(tInterface);
         });
     }
+
     private void RegisterFactory(Type tinterface, Delegate factory)
     {
         this.TryAction(() =>
         {
             lock (this)
             {
-                this.Factories[tinterface] = factory;
+                if (!this.Factories.TryGetValue(tinterface, out var factories))
+                {
+                    factories = [];
+                    this.Factories[tinterface] = factories;
+                }
+
+                factories.Add(factory);
             }
         });
     }
+
     private void RemoveService(Type tInterface)
     {
         this.TryAction(() =>
@@ -624,21 +685,24 @@ public sealed class ServiceManager : IServiceManager
             }
         });
     }
+
     private void Map(Type tinterface, Type tclass, Lifetime lifetime)
     {
         this.TryAction(() =>
         {
             lock (this)
             {
-                if (this.InterfaceMapping.ContainsKey(tinterface))
+                if (!this.InterfaceMapping.TryGetValue(tinterface, out var value))
                 {
-                    throw new InvalidOperationException($"{nameof(ServiceManager)} already contains an entry for type {tinterface}");
+                    value = [];
+                    this.InterfaceMapping[tinterface] = value;
                 }
 
-                this.InterfaceMapping[tinterface] = (tclass, lifetime);
+                value.Add((tclass, lifetime));
             }
         });
     }
+
     private bool IsMapped(Type tinterface)
     {
         return this.TryFunc(() =>
@@ -659,6 +723,7 @@ public sealed class ServiceManager : IServiceManager
             }
         });
     }
+
     private object GetObject(Type tInterface)
     {
         if (IsServiceManagerDependency(tInterface))
@@ -666,43 +731,50 @@ public sealed class ServiceManager : IServiceManager
             return this;
         }
 
-        if (!this.InterfaceMapping.TryGetValue(tInterface, out var mappingTuple) &&
+        if (!this.InterfaceMapping.TryGetValue(tInterface, out var mappingTuples) &&
             this.Resolvers.Any(resolver => resolver.CanResolve(tInterface)) is false)
         {
             throw new DependencyInjectionException($"No registered service and no resolver can resolve for type {tInterface.Name}.");
         }
 
-        (var type, var lifetime) = mappingTuple;
-        object obj;
-        if (lifetime == Lifetime.Singleton || lifetime == Lifetime.Scoped)
+        var tuple = mappingTuples?.FirstOrDefault();
+        if (tuple is not null &&
+            tuple.Value.Item2 is Lifetime.Singleton or Lifetime.Scoped)
         {
-            if (!this.Instances.TryGetValue(type, out obj))
+            if (this.Instances.TryGetValue(tuple.Value.Item1, out var objs) &&
+                objs.FirstOrDefault() is object obj)
             {
-                obj = this.TryImplementService(tInterface);
+                return obj;
+            }
+            else
+            {
+                if (this.TryImplementService(tInterface) is not object newObj)
+                {
+                    throw new DependencyInjectionException($"No suitable constructor was found for type {tInterface.Name}");
+                }
+
+                if (objs is null)
+                {
+                    objs = [];
+                    this.Instances[tuple.Value.Item1] = objs;
+                }
+
+                objs.Add(newObj);
+                return newObj;
             }
         }
         else
         {
-            obj = this.TryImplementService(tInterface);
-        }
-
-        if (obj is not null)
-        {
-            if (lifetime == Lifetime.Singleton || lifetime == Lifetime.Scoped)
+            if (this.TryImplementService(tInterface) is not object obj)
             {
-                this.Instances[type] = obj;
+                throw new DependencyInjectionException($"No suitable constructor was found for type {tInterface.Name}");
             }
 
             return obj;
         }
-
-        /*
-         * If no constructors were able to be called succesfully, throw exception.
-         */
-
-        throw new DependencyInjectionException($"No suitable constructor was found for type {tInterface.Name}!");
     }
-    private object TryImplementService(Type type)
+
+    private object? TryImplementService(Type type)
     {
         foreach (var resolver in this.Resolvers)
         {
@@ -712,15 +784,25 @@ public sealed class ServiceManager : IServiceManager
             }
         }
 
-        (var implementType, _) = this.InterfaceMapping[type];
-        if (this.Factories.TryGetValue(type, out var factory))
+        var registrations = this.InterfaceMapping[type];
+        if (registrations is null ||
+            registrations.Count is 0)
         {
-            return factory.DynamicInvoke(this);
+            throw new DependencyInjectionException($"No registered service for type {type.Name}.");
+        }
+
+        (var implementType, _) = registrations.FirstOrDefault();
+        if (this.Factories.TryGetValue(type, out var factories) &&
+            factories is not null &&
+            factories.Count > 0)
+        {
+            return factories.FirstOrDefault().DynamicInvoke(this);
         }
 
         return this.FindAndCallConstructors(implementType);
     }
-    private object FindAndCallConstructors(Type implementType)
+
+    private object? FindAndCallConstructors(Type implementType)
     {
         /*
          * Order constructors to give priority to constructors that have PrefferedConstructorAttribute decorator
@@ -751,20 +833,25 @@ public sealed class ServiceManager : IServiceManager
 
         return null;
     }
-    private object[] GetParameters(ParameterInfo[] parameterInfos)
+
+    private object[]? GetParameters(ParameterInfo[] parameterInfos)
     {
-        var parameterImplementationList = new List<object>();
+        var parameterImplementationList = new object[parameterInfos.Length];
+        var index = 0;
         foreach (var par in parameterInfos)
         {
             if (IsServiceManagerDependency(par.ParameterType))
             {
-                parameterImplementationList.Add(this);
+                parameterImplementationList[index] = this;
+                index++;
                 continue;
             }
 
-            if (!this.InterfaceMapping.TryGetValue(par.ParameterType, out var mappingTuple))
+            if (!this.InterfaceMapping.TryGetValue(par.ParameterType, out var registrations) ||
+                registrations is null ||
+                registrations.Count is 0)
             {
-                object resolvedParam = null;
+                object? resolvedParam = null;
                 foreach (var resolver in this.Resolvers)
                 {
                     if (resolver.CanResolve(par.ParameterType))
@@ -776,46 +863,62 @@ public sealed class ServiceManager : IServiceManager
 
                 if (resolvedParam is not null)
                 {
-                    parameterImplementationList.Add(resolvedParam);
+                    parameterImplementationList[index] = resolvedParam;
+                    index++;
                     continue;
                 }
 
-                return null;
+                return default;
             }
 
-            (var actualType, var lifetime) = mappingTuple;
-            if (this.Instances.TryGetValue(par.ParameterType, out var obj))
+            (var actualType, var lifetime) = registrations.FirstOrDefault();
+            if (this.Instances.TryGetValue(par.ParameterType, out var instances) &&
+                instances is not null &&
+                instances.Count > 0)
             {
-                parameterImplementationList.Add(obj);
+                parameterImplementationList[index] = instances.FirstOrDefault();
+                index++;
                 continue;
             }
 
-            if (this.Instances.TryGetValue(actualType, out obj))
+            if (this.Instances.TryGetValue(actualType, out var instances2) &&
+                instances2 is not null &&
+                instances2.Count > 0)
             {
-                parameterImplementationList.Add(obj);
+                parameterImplementationList[index] = instances2.FirstOrDefault();
+                index++;
                 continue;
             }
 
-            obj = this.TryImplementService(par.ParameterType);
+            var obj = this.TryImplementService(par.ParameterType);
             if (obj is null)
             {
                 return null;
             }
 
-            if (lifetime == Lifetime.Singleton)
+            if (lifetime is Lifetime.Singleton or Lifetime.Scoped)
             {
-                this.Instances[actualType] = obj;
+                if (!this.Instances.TryGetValue(actualType, out var actualRegistrations) ||
+                    actualRegistrations is null)
+                {
+                    actualRegistrations = [];
+                    this.Instances[actualType] = actualRegistrations;
+                }
+
+                actualRegistrations.Add(obj);
             }
 
-            parameterImplementationList.Add(obj);
+            parameterImplementationList[index] = obj;
+            index++;
         }
 
-        return parameterImplementationList.ToArray();
+        return parameterImplementationList;
     }
+
     private ServiceManager CreateScopeInner()
     {
-        var interfaceMapping = new Dictionary<Type, (Type, Lifetime)>(this.InterfaceMapping);
-        var factories = new Dictionary<Type, Delegate>(this.Factories);
+        var interfaceMapping = new Dictionary<Type, List<(Type, Lifetime)>>(this.InterfaceMapping);
+        var factories = new Dictionary<Type, List<Delegate>>();
         var exceptionHandlers = new Dictionary<Type, Delegate>(this.ExceptionHandlers);
         var resolvers = new List<IDependencyResolver>(this.Resolvers);
         /*
@@ -827,26 +930,42 @@ public sealed class ServiceManager : IServiceManager
          */
         foreach (var kvp in this.InterfaceMapping)
         {
-            if (kvp.Value.Item2 is Lifetime.Singleton)
+            foreach(var registration in kvp.Value)
             {
-                factories[kvp.Key] = new Func<IServiceProvider, object>((scopedManager) => this.ResolveSingletonWithScopedManager(scopedManager as ServiceManager, kvp.Key, kvp.Value.Item1));
+                if (registration.Item2 is Lifetime.Singleton)
+                {
+                    if (!factories.TryGetValue(kvp.Key, out var factoryRegistrations) ||
+                        factoryRegistrations is null)
+                    {
+                        factoryRegistrations = [];
+                        factories[kvp.Key] = factoryRegistrations;
+                    }
+
+                    factoryRegistrations.Add(new Func<IServiceProvider, object>((scopedManager) => this.ResolveSingletonWithScopedManager((ServiceManager)scopedManager, kvp.Key, registration.Item1)));
+                }
             }
         }
 
         return new ServiceManager(
             interfaceMapping: interfaceMapping,
-            singletons: new Dictionary<Type, object>(),
+            singletons: [],
             factories: factories,
             exceptionHandlers: exceptionHandlers,
             resolvers: resolvers,
             parent: this,
             isReadOnly: this.AllowScopedManagerModifications is false);
     }
+
     private object ResolveSingletonWithScopedManager(ServiceManager scopedManager, Type registerType, Type implementedType)
     {
         try
         {
-            return this.PrepareAndGetService(registerType);
+            if (this.PrepareAndGetService(registerType) is not object obj)
+            {
+                throw new DependencyInjectionException($"Unable to resolve singleton of type {registerType.Name}.");
+            }
+
+            return obj;
         }
         catch (DependencyInjectionException)
         {
@@ -864,14 +983,30 @@ public sealed class ServiceManager : IServiceManager
             var obj = scopedManager.FindAndCallConstructors(implementedType);
             if (obj is not null)
             {
-                scopedManager.Instances[implementedType] = obj;
-                this.Instances[implementedType] = obj;
+                if (!scopedManager.Instances.TryGetValue(implementedType, out var scopedInstances) ||
+                    scopedInstances is null)
+                {
+                    scopedInstances = [];
+                    scopedManager.Instances[implementedType] = scopedInstances;
+                }
+
+                scopedInstances.Add(obj);
+
+                if (!this.Instances.TryGetValue(implementedType, out var instances) ||
+                    instances is null)
+                {
+                    instances = [];
+                    this.Instances[implementedType] = instances;
+                }
+
+                instances.Add(obj);
                 return obj;
             }
 
             throw;
         }
     }
+
     private void TryAction(Action action)
     {
         try
@@ -883,7 +1018,8 @@ public sealed class ServiceManager : IServiceManager
             this.HandleException(ex);
         }
     }
-    private T TryFunc<T>(Func<T> action)
+
+    private T? TryFunc<T>(Func<T> action)
     {
         try
         {
@@ -896,6 +1032,7 @@ public sealed class ServiceManager : IServiceManager
 
         return default;
     }
+
     private void HandleException(Exception exception)
     {
         if (exception is TargetInvocationException && exception.InnerException is not null)
@@ -916,6 +1053,7 @@ public sealed class ServiceManager : IServiceManager
             throw exception;
         }
     }
+
     private void Dispose(bool disposing)
     {
         if (!this.disposedValue)
@@ -926,17 +1064,28 @@ public sealed class ServiceManager : IServiceManager
                  * Dispose of all instances. If this instance of ServiceManager is scoped, ignore the Singleton instances as they are shared
                  * across multiple service managers.
                  */
-                foreach (var interfacePair in this.InterfaceMapping
-                    .Where(kvp => kvp.Value.Item2 != Lifetime.Transient)
-                    .Where(kvp => this.scoped is false || kvp.Value.Item2 != Lifetime.Singleton))
+                foreach(var kvp in this.InterfaceMapping)
                 {
-                    if (this.Instances.TryGetValue(interfacePair.Key, out var instance) && instance is IDisposable disposable)
+                    foreach((var type, var lifetime) in kvp.Value)
                     {
-                        disposable.Dispose();
-                    }
-                    else if (this.Instances.TryGetValue(interfacePair.Value.Item1, out var instance2) && instance2 is IDisposable disposable2)
-                    {
-                        disposable2.Dispose();
+                        if (lifetime is Lifetime.Scoped ||
+                            this.scoped is false && lifetime is Lifetime.Singleton)
+                        {
+                            if (this.Instances.TryGetValue(kvp.Key, out var instances1))
+                            {
+                                foreach(var instance in instances1.OfType<IDisposable>())
+                                {
+                                    instance.Dispose();
+                                }
+                            }
+                            else if (this.Instances.TryGetValue(type, out var instances2))
+                            {
+                                foreach(var instance in instances2.OfType<IDisposable>())
+                                {
+                                    instance.Dispose();
+                                }
+                            }
+                        }
                     }
                 }
             }

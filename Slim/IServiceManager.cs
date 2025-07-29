@@ -11,7 +11,7 @@ public interface IServiceManager : IServiceProvider, IServiceProducer
     /// <summary>
     /// Gets the <see cref="IServiceManager"/> that created the current <see cref="IServiceManager"/>. Returns null in case there is no parent.
     /// </summary>
-    IServiceManager ParentServiceManager { get; }
+    IServiceManager? ParentServiceManager { get; }
     /// <summary>
     /// Allow modifications to scoped <see cref="IServiceManager"/> created from this <see cref="IServiceManager"/>.
     /// </summary>

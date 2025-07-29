@@ -192,7 +192,7 @@ public class ServiceManagerTests
     }
 
     [TestMethod]
-    public void MultipleDeclarationsOfSameInterfaceThrows()
+    public void MultipleDeclarationsOfSameInterfaceDoesNotThrow()
     {
         var di = new ServiceManager();
         di.RegisterSingleton<IIndependentService, IndependentService>();
@@ -202,7 +202,7 @@ public class ServiceManagerTests
             di.RegisterSingleton<IIndependentService, IndependentService>();
         });
 
-        action.Should().Throw<InvalidOperationException>();
+        action.Should().NotThrow<InvalidOperationException>();
     }
 
     [TestMethod]
@@ -277,8 +277,16 @@ public class ServiceManagerTests
             return true;
         });
 
-        di.RegisterSingleton<IIndependentService, IndependentService>();
-        di.RegisterSingleton<IIndependentService, IndependentService>();
+        di.RegisterSingleton<IIndependentService, ThrowingIndependentService>();
+
+        try
+        {
+            di.BuildSingletons();
+        }
+        catch(Exception e)
+        {
+            e.Should().BeOfType<DependencyInjectionException>();
+        }
 
         thrown.Should().BeTrue();
     }
@@ -294,11 +302,12 @@ public class ServiceManagerTests
             return false;
         });
 
-        di.RegisterSingleton<IIndependentService, IndependentService>();
-        var action = new Action(() =>
+        di.RegisterSingleton<IIndependentService, ThrowingIndependentService>();
+
+        var action = () =>
         {
-            di.RegisterSingleton<IIndependentService, IndependentService>();
-        });
+            di.BuildSingletons();
+        };
 
         action.Should().Throw<InvalidOperationException>();
         thrown.Should().BeTrue();
