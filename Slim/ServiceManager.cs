@@ -857,7 +857,7 @@ public sealed class ServiceManager : IServiceManager
                     if (resolver.CanResolve(par.ParameterType))
                     {
                         resolvedParam = resolver.Resolve(this, par.ParameterType);
-                        continue;
+                        break;
                     }
                 }
 
