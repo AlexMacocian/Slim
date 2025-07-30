@@ -925,8 +925,17 @@ public sealed class ServiceManager : IServiceManager
          */
         foreach (var kvp in this.InterfaceMapping)
         {
+            if (kvp.Value.Count is 0)
+            {
+                continue;
+            }
+
             foreach(var registration in kvp.Value)
             {
+                /*
+                 * Singletons reference the original service manager while
+                 * scoped or transient will reference the original factories.
+                 */
                 if (registration.Item2 is Lifetime.Singleton)
                 {
                     if (!factories.TryGetValue(kvp.Key, out var factoryRegistrations) ||
@@ -937,6 +946,20 @@ public sealed class ServiceManager : IServiceManager
                     }
 
                     factoryRegistrations.Add(new Func<IServiceProvider, object>((scopedManager) => this.ResolveSingletonWithScopedManager((ServiceManager)scopedManager, kvp.Key, registration.Item1)));
+                }
+                else if (this.Factories.TryGetValue(kvp.Key, out var originalFactories))
+                {
+                    if (!factories.TryGetValue(kvp.Key, out var factoryRegistrations) ||
+                        factoryRegistrations is null)
+                    {
+                        factoryRegistrations = [];
+                        factories[kvp.Key] = factoryRegistrations;
+                    }
+
+                    foreach(var factory in originalFactories)
+                    {
+                        factoryRegistrations.Add(factory);
+                    }
                 }
             }
         }
