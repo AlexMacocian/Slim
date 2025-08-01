@@ -732,12 +732,12 @@ public sealed class ServiceManager : IServiceManager
             return default;
         }
 
-        var tuple = mappingTuples?.FirstOrDefault();
+        var tuple = mappingTuples?.LastOrDefault();
         if (tuple is not null &&
             tuple.Value.Item2 is Lifetime.Singleton or Lifetime.Scoped)
         {
             if (this.Instances.TryGetValue(tuple.Value.Item1, out var objs) &&
-                objs.FirstOrDefault() is object obj)
+                objs.LastOrDefault() is object obj)
             {
                 return obj;
             }
@@ -786,12 +786,12 @@ public sealed class ServiceManager : IServiceManager
             throw new DependencyInjectionException($"No registered service for type {type.Name}.");
         }
 
-        (var implementType, _) = registrations.FirstOrDefault();
+        (var implementType, _) = registrations.LastOrDefault();
         if (this.Factories.TryGetValue(type, out var factories) &&
             factories is not null &&
             factories.Count > 0)
         {
-            return factories.FirstOrDefault().DynamicInvoke(this);
+            return factories.LastOrDefault().DynamicInvoke(this);
         }
 
         return this.FindAndCallConstructors(implementType);
@@ -866,12 +866,12 @@ public sealed class ServiceManager : IServiceManager
                 return default;
             }
 
-            (var actualType, var lifetime) = registrations.FirstOrDefault();
+            (var actualType, var lifetime) = registrations.LastOrDefault();
             if (this.Instances.TryGetValue(par.ParameterType, out var instances) &&
                 instances is not null &&
                 instances.Count > 0)
             {
-                parameterImplementationList[index] = instances.FirstOrDefault();
+                parameterImplementationList[index] = instances.LastOrDefault();
                 index++;
                 continue;
             }
@@ -880,7 +880,7 @@ public sealed class ServiceManager : IServiceManager
                 instances2 is not null &&
                 instances2.Count > 0)
             {
-                parameterImplementationList[index] = instances2.FirstOrDefault();
+                parameterImplementationList[index] = instances2.LastOrDefault();
                 index++;
                 continue;
             }
