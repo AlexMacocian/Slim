@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Pipelines/">
+    <File Path=".github/workflows/cd.yaml" />
+    <File Path=".github/workflows/ci.yaml" />
+    <File Path=".github/workflows/gitlab-mirror.yaml" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="Slim.Integration.Tests/Slim.Integration.Tests.csproj" />
+  <Project Path="Slim.Integration/Slim.Integration.csproj" />
+  <Project Path="Slim.Tests/Slim.Tests.csproj">
+    <BuildDependency Project="Slim/Slim.csproj" />
+  </Project>
+  <Project Path="Slim/Slim.csproj" />
+</Solution>
