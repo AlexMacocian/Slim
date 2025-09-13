@@ -2,7 +2,6 @@
   <Folder Name="/Pipelines/">
     <File Path=".github/workflows/cd.yaml" />
     <File Path=".github/workflows/ci.yaml" />
-    <File Path=".github/workflows/gitlab-mirror.yaml" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />

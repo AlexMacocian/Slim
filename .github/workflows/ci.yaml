@@ -17,7 +17,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Path: Slim.sln
+      Solution_Path: Slim.slnx
       Test_Project_Path: Slim.Tests\Slim.Tests.csproj
       Integration_Test_Project_Path: Slim.Integration.Tests\Slim.Integration.Tests.csproj
       Source_Project_Path: Slim\Slim.csproj

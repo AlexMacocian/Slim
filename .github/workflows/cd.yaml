@@ -16,7 +16,7 @@ jobs:
 
     env:
       Configuration: Release
-      Solution_Path: Slim.sln
+      Solution_Path: Slim.slnx
       Test_Project_Path: Slim.Tests\Slim.Tests.csproj
       Source_Project_Path: Slim\Slim.csproj
       Integration_Project_Path: Slim.Integration\Slim.Integration.csproj
